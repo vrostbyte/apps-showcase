@@ -22,6 +22,11 @@ interface DemoAccess {
   note?: string;     // e.g. "Read-only. Data resets nightly."
 }
 
+interface AccessCode {
+  code: string;
+  label: string;
+}
+
 interface Project {
   slug: string;
   name: string;
@@ -38,6 +43,7 @@ interface Project {
   infra: string;
   screenshots: Screenshot[];
   demo?: DemoAccess;
+  accessCodes?: AccessCode[];
 }
 
 interface CategoryMeta {
@@ -143,6 +149,10 @@ const PROJECTS: Project[] = [
       password: "demo2026",
       note: "Read-only demo account. Same account as MyFlagCoach; both apps share one Supabase project.",
     },
+    accessCodes: [
+      { code: "SDTRIP26", label: "Parent view (no login needed)" },
+      { code: "VVSTAFF1", label: "Staff/chaperone view" }
+    ],
   },
   {
     slug: "pulsemap",
@@ -637,13 +647,20 @@ function Terminal({ onClose }: { onClose: () => void }) {
    ════════════════════════════════════════════════ */
 function ProjectModal({ project: p, onClose }: { project: Project; onClose: () => void }) {
   const IconComp = p.Icon;
+  const [copied, setCopied] = useState<string | null>(null);
+
+  const copyToClipboard = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(id);
+    setTimeout(() => setCopied(null), 1500);
+  };
 
   return (
     <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 900, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}>
       <div onClick={(e) => e.stopPropagation()} style={{ background: "#111", border: "1px solid #222", borderRadius: "16px", maxWidth: "640px", width: "100%", maxHeight: "85vh", overflowY: "auto", position: "relative" }}>
         {/* Header */}
         <div style={{ padding: "32px 32px 24px", borderBottom: "1px solid #1a1a1a", background: `linear-gradient(135deg, ${p.color}12 0%, transparent 60%)`, borderRadius: "16px 16px 0 0" }}>
-          <button onClick={onClose} style={{ position: "absolute", top: "16px", right: "16px", background: "#1a1a1a", border: "1px solid #333", color: "#888", width: "32px", height: "32px", borderRadius: "8px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <button onClick={onClose} style={{ position: "absolute", top: "16px", right: "16px", background: "#1a1a1a", border: "1px solid #333", color: "#888", width: "32px", height: "32px", borderRadius: "8px", cursor: "pointer", fontSize: "16px", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <X size={14} />
           </button>
           <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "8px" }}>
@@ -679,6 +696,49 @@ function ProjectModal({ project: p, onClose }: { project: Project; onClose: () =
 
           {/* Demo access card */}
           {p.demo && <DemoAccessCard demo={p.demo} color={p.color} />}
+
+          {/* Access Codes Section */}
+          {p.accessCodes && (
+            <div style={{
+              background: "#0d0d0f",
+              border: `1px solid #222`,
+              borderRadius: "10px",
+              padding: "16px",
+              marginBottom: "24px",
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+                <Lock size={14} color={p.color} />
+                <span style={{ color: "#ddd", fontSize: "13px", fontWeight: 600 }}>Access Codes</span>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                {p.accessCodes.map((ac) => (
+                  <div key={ac.code} style={{
+                    display: "flex", alignItems: "center", justifyContent: "space-between",
+                    background: "#111", borderRadius: "6px", padding: "8px 12px",
+                    border: "1px solid #1a1a1a",
+                  }}>
+                    <div>
+                      <span style={{ color: "#555", fontSize: "10px", fontFamily: "'Commit Mono', monospace", textTransform: "uppercase", letterSpacing: "0.08em" }}>{ac.label}</span>
+                      <div style={{ color: "#ccc", fontSize: "13px", fontFamily: "'Commit Mono', monospace" }}>{ac.code}</div>
+                    </div>
+                    <button
+                      onClick={() => copyToClipboard(ac.code, ac.code)}
+                      style={{
+                        background: "none", border: "1px solid #2a2a2a", color: copied === ac.code ? p.color : "#666",
+                        padding: "4px 10px", borderRadius: "4px", cursor: "pointer",
+                        fontSize: "11px", fontFamily: "'Commit Mono', monospace",
+                      }}
+                    >
+                      {copied === ac.code ? "copied" : "copy"}
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <p style={{ color: "#555", fontSize: "11px", margin: "12px 0 0", fontFamily: "'Commit Mono', monospace" }}>
+                Enter these at the login screen to view the trip without an account.
+              </p>
+            </div>
+          )}
 
           {/* Tech stack */}
           <Section title="Tech Stack">
