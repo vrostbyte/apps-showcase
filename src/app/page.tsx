@@ -105,7 +105,7 @@ const PROJECTS: Project[] = [
     ],
     demo: {
       url: "https://myflagcoach.joshjgriffith.dev",
-      email: "demo@joshjgriffith.dev",
+      email: "demo@myflagcoach.demo",
       password: "demo2026",
       note: "Read-only demo account. Pre-loaded with a sample team, roster, and playbook.",
     },
@@ -139,7 +139,7 @@ const PROJECTS: Project[] = [
     ],
     demo: {
       url: "https://periwinkel.app",
-      email: "demo@joshjgriffith.dev",
+      email: "demo@myflagcoach.demo",
       password: "demo2026",
       note: "Read-only demo. Pre-loaded with a sample trip itinerary and stops.",
     },
