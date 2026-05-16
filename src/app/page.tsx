@@ -132,7 +132,7 @@ const PROJECTS: Project[] = [
     slug: "saloni-mental-health",
     name: "Saloni Mental Health",
     tagline: "Telehealth practice site for a psychiatric NP",
-    url: "https://salonimentalhealth.vercel.app",
+    url: "https://saloni.joshjgriffith.dev",
     stack: ["HTML", "CSS", "JavaScript", "Vercel"],
     category: "volunteer",
     status: "LIVE",
