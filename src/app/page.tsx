@@ -68,7 +68,7 @@ const PROJECTS: Project[] = [
     slug: "myflagcoach-v2",
     name: "MyFlagCoach v2",
     tagline: "Flag football coaching and play management platform",
-    url: "https://myflagcoach-v2.vercel.app",
+    url: "https://myflagcoach.joshjgriffith.dev",
     stack: ["Next.js", "Supabase", "Tailwind CSS", "Vercel"],
     category: "app",
     status: "LIVE",
