@@ -141,7 +141,7 @@ const PROJECTS: Project[] = [
       url: "https://periwinkel.app",
       email: "demo@myflagcoach.demo",
       password: "demo2026",
-      note: "Read-only demo. Pre-loaded with a sample trip itinerary and stops.",
+      note: "Read-only demo account. Same account as MyFlagCoach; both apps share one Supabase project.",
     },
   },
   {
