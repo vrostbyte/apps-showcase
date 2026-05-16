@@ -857,7 +857,34 @@ export default function AppShowcase() {
                     </div>
                   </div>
                   <h3 style={{ margin: "0 0 6px", fontSize: "17px", fontWeight: 600, color: "#f0f0f0" }}>{p.name}</h3>
-                  <p style={{ margin: "0 0 16px", color: "#777", fontSize: "13px", lineHeight: 1.5 }}>{p.tagline}</p>
+                  <p style={{ margin: "0 0 8px", color: "#777", fontSize: "13px", lineHeight: 1.5 }}>{p.tagline}</p>
+
+                  {/* Domain Link */}
+                  <div style={{ marginBottom: "16px" }}>
+                    <a
+                      href={p.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "4px",
+                        color: p.color,
+                        fontSize: "11px",
+                        fontFamily: "'Commit Mono', monospace",
+                        textDecoration: "none",
+                        opacity: 0.8,
+                        transition: "opacity 0.2s"
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
+                      onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.8")}
+                    >
+                      {p.url.replace(/^https?:\/\//, "")}
+                      <ArrowUpRight size={10} />
+                    </a>
+                  </div>
+
                   <div style={{ display: "flex", gap: "5px", flexWrap: "wrap" }}>
                     {p.stack.slice(0, 4).map((t) => (
                       <span key={t} style={{ background: "#161618", color: "#888", padding: "3px 9px", borderRadius: "4px", fontSize: "10px", fontFamily: "'Commit Mono', monospace", border: "1px solid #1f1f1f" }}>{t}</span>
