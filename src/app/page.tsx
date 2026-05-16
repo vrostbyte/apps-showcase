@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
   Beer, Flag, Compass, MapPin, Brain, Terminal as TermIcon,
-  Github, Globe, X, ChevronRight, Layers,
+  GitBranch, Globe, X, ChevronRight, Layers,
   Wrench, Heart, ArrowUpRight, Monitor, LucideIcon
 } from "lucide-react";
 
@@ -317,6 +317,20 @@ function Terminal({ onClose }: TerminalProps) {
   );
 }
 
+interface SectionProps {
+  title: string;
+  children: React.ReactNode;
+}
+
+function Section({ title, children }: SectionProps) {
+  return (
+    <div style={{ marginBottom: "24px" }}>
+      <h4 style={{ color: "#555", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.12em", margin: "0 0 10px", fontFamily: "'Commit Mono', monospace" }}>{title}</h4>
+      {children}
+    </div>
+  );
+}
+
 /* ════════════════════════════════════════════════
    PROJECT DETAIL MODAL
    ════════════════════════════════════════════════ */
@@ -411,20 +425,6 @@ function ProjectModal({ project: p, onClose }: ProjectModalProps) {
   );
 }
 
-interface SectionProps {
-  title: string;
-  children: React.ReactNode;
-}
-
-function Section({ title, children }: SectionProps) {
-  return (
-    <div style={{ marginBottom: "24px" }}>
-      <h4 style={{ color: "#555", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.12em", margin: "0 0 10px", fontFamily: "'Commit Mono', monospace" }}>{title}</h4>
-      {children}
-    </div>
-  );
-}
-
 /* ════════════════════════════════════════════════
    MAIN VIEW
    ════════════════════════════════════════════════ */
@@ -442,7 +442,7 @@ export default function AppShowcase() {
       <div style={{ position: "fixed", inset: 0, opacity: 0.04, pointerEvents: "none", backgroundImage: "radial-gradient(circle, #fff 0.5px, transparent 0.5px)", backgroundSize: "24px 24px" }} />
 
       {/* Nav */}
-      <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(9,9,11,0.8)", backdropFilter: "blur(12px)", borderBottom: "1px solid #1a1a1a", padding: "0 24px" }}>
+      <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(12px)", borderBottom: "1px solid #1a1a1a", padding: "0 24px" }}>
         <div style={{ maxWidth: "1100px", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", height: "56px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <span style={{ color: "#4ade80", fontFamily: "'Commit Mono', monospace", fontWeight: 700, fontSize: "15px" }}>~/apps</span>
@@ -454,7 +454,7 @@ export default function AppShowcase() {
               <Globe size={13} /> portfolio
             </a>
             <a href="https://github.com/vrostbyte" target="_blank" rel="noopener noreferrer" style={{ color: "#555", display: "flex", alignItems: "center", gap: "4px", fontSize: "13px", textDecoration: "none" }}>
-              <Github size={13} /> github
+              <GitBranch size={13} /> github
             </a>
             <button onClick={() => setTermOpen(true)} style={{ background: "#111", border: "1px solid #2a2a2a", color: "#4ade80", padding: "6px 14px", borderRadius: "6px", cursor: "pointer", fontSize: "12px", fontFamily: "'Commit Mono', monospace", display: "flex", alignItems: "center", gap: "6px", transition: "border-color 0.2s" }}
               onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#4ade80")}
@@ -474,257 +474,6 @@ export default function AppShowcase() {
         <h1 style={{ fontSize: "clamp(32px, 5vw, 50px)", fontWeight: 700, lineHeight: 1.15, margin: "0 0 20px", color: "#f5f5f5", letterSpacing: "-0.02em" }}>
           Apps I&apos;ve built,<br />
           <span style={{ color: "#4ade80" }}>shipped</span> &amp; maintain.
-        </h1>
-        <p style={{ color: "#777", fontSize: "16px", lineHeight: 1.7, maxWidth: "560px", margin: 0 }}>
-          Real apps solving real problems. Vibe-coded with AI-assisted development and deployed to production. Some are mine, some I build for others for free.
-        </p>
-      </header>
-
-      {/* Filters */}
-      <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 24px 40px" }}>
-        <div style={{ display: "flex", gap: "4px", background: "#111", borderRadius: "8px", padding: "4px", width: "fit-content", border: "1px solid #1a1a1a" }}>
-          {Object.entries(CATEGORY_META).map(([key, { label, Icon: CatIcon }]) => (
-            <button key={key} onClick={() => setFilter(key)} style={{
-              background: filter === key ? "#1f1f1f" : "transparent",
-              border: "none", color: filter === key ? "#f0f0f0" : "#555",
-              padding: "6px 14px", borderRadius: "6px", cursor: "pointer",
-              fontSize: "12px", fontWeight: filter === key ? 600 : 400,
-              fontFamily: "'Commit Mono', monospace",
-              display: "flex", alignItems: "center", gap: "5px",
-              transition: "all 0.15s",
-            }}>
-              <CatIcon size={12} /> {label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Project Grid */}
-      <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 24px 100px" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "16px" }}>
-          {filtered.map((p) => {
-            const IconComp = p.Icon;
-            const hovered = hoveredCard === p.slug;
-            return (
-              <div key={p.slug} onClick={() => setSelectedProject(p)}
-                onMouseEnter={() => setHoveredCard(p.slug)}
-                onMouseLeave={() => setHoveredCard(null)}
-                style={{
-                  background: hovered ? "#131316" : "#0f0f12",
-                  border: `1px solid ${hovered ? p.color + "40" : "#1a1a1a"}`,
-                  borderRadius: "12px", padding: "24px", cursor: "pointer",
-                  transition: "all 0.2s ease",
-                  transform: hovered ? "translateY(-2px)" : "none",
-                  position: "relative", overflow: "hidden",
-                }}>
-                {hovered && <div style={{ position: "absolute", top: "-50%", right: "-50%", width: "100%", height: "100%", background: `radial-gradient(circle, ${p.color}08 0%, transparent 70%)`, pointerEvents: "none" }} />}
-                <div style={{ position: "relative" }}>
-                  {/* Top row */}
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "14px" }}>
-                    <div style={{ width: "38px", height: "38px", borderRadius: "9px", background: `${p.color}12`, border: `1px solid ${p.color}25`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <IconComp size={18} color={p.color} />
-                    </div>
-                    <div style={{ display: "flex", gap: "6px" }}>
-                      <span style={{ background: p.status === "LIVE" ? "#16a34a18" : "#a3730018", color: p.status === "LIVE" ? "#4ade80" : "#fbbf24", padding: "2px 8px", borderRadius: "20px", fontSize: "10px", fontWeight: 600, fontFamily: "'Commit Mono', monospace" }}>
-                        {p.status === "LIVE" ? "● LIVE" : "○ DEV"}
-                      </span>
-                      {p.category === "volunteer" && (
-                        <span style={{ background: "#e879a012", color: "#f9a8c9", padding: "2px 8px", borderRadius: "20px", fontSize: "10px", fontWeight: 600, fontFamily: "'Commit Mono', monospace", display: "flex", alignItems: "center", gap: "3px" }}>
-                          <Heart size={8} /> PRO BONO
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Name + tagline */}
-                  <h3 style={{ margin: "0 0 6px", fontSize: "17px", fontWeight: 600, color: "#f0f0f0" }}>{p.name}</h3>
-                  <p style={{ margin: "0 0 16px", color: "#777", fontSize: "13px", lineHeight: 1.5 }}>{p.tagline}</p>
-
-                  {/* Stack pills */}
-                  <div style={{ display: "flex", gap: "5px", flexWrap: "wrap" }}>
-                    {p.stack.slice(0, 4).map((t) => (
-                      <span key={t} style={{ background: "#161618", color: "#888", padding: "3px 9px", borderRadius: "4px", fontSize: "10px", fontFamily: "'Commit Mono', monospace", border: "1px solid #1f1f1f" }}>{t}</span>
-                    ))}
-                    {p.stack.length > 4 && (
-                      <span style={{ background: "#161618", color: "#555", padding: "3px 9px", borderRadius: "4px", fontSize: "10px", fontFamily: "'Commit Mono', monospace", border: "1px solid #1f1f1f" }}>+{p.stack.length - 4}</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Footer */}
-      <footer style={{ borderTop: "1px solid #1a1a1a", padding: "24px", textAlign: "center", color: "#333", fontSize: "12px", fontFamily: "'Commit Mono', monospace" }}>
-        vibe coded with care // josh griffith // {new Date().getFullYear()}
-      </footer>
-
-      {/* Overlays */}
-      {termOpen && <Terminal onClose={() => setTermOpen(false)} />}
-      {selectedProject && <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />}
-    </div>
-  );
-}
-
-/* ════════════════════════════════════════════════
-   PROJECT DETAIL MODAL
-   ════════════════════════════════════════════════ */
-interface ProjectModalProps {
-  project: Project | null;
-  onClose: () => void;
-}
-
-function ProjectModal({ project: p, onClose }: ProjectModalProps) {
-  if (!p) return null;
-  const IconComp = p.Icon;
-
-  return (
-    <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 900, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}>
-      <div onClick={(e) => e.stopPropagation()} style={{ background: "#111", border: "1px solid #222", borderRadius: "16px", maxWidth: "640px", width: "100%", maxHeight: "85vh", overflowY: "auto", position: "relative" }}>
-        {/* Header */}
-        <div style={{ padding: "32px 32px 24px", borderBottom: "1px solid #1a1a1a", background: `linear-gradient(135deg, ${p.color}12 0%, transparent 60%)`, borderRadius: "16px 16px 0 0" }}>
-          <button onClick={onClose} style={{ position: "absolute", top: "16px", right: "16px", background: "#1a1a1a", border: "1px solid #333", color: "#888", width: "32px", height: "32px", borderRadius: "8px", cursor: "pointer", fontSize: "16px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <X size={14} />
-          </button>
-          <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "8px" }}>
-            <div style={{ width: "44px", height: "44px", borderRadius: "10px", background: `${p.color}15`, border: `1px solid ${p.color}30`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <IconComp size={22} color={p.color} />
-            </div>
-            <div>
-              <h2 style={{ margin: 0, color: "#f0f0f0", fontSize: "22px", fontFamily: "'Commit Mono', var(--font-ibm-plex-mono), monospace", fontWeight: 700 }}>{p.name}</h2>
-              <p style={{ margin: "2px 0 0", color: "#888", fontSize: "14px" }}>{p.tagline}</p>
-            </div>
-          </div>
-          <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "16px" }}>
-            <span style={{ background: p.status === "LIVE" ? "#16a34a22" : "#a3730022", color: p.status === "LIVE" ? "#4ade80" : "#fbbf24", padding: "3px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: 600, letterSpacing: "0.05em", border: `1px solid ${p.status === "LIVE" ? "#16a34a44" : "#a3730044"}` }}>
-              {p.status === "LIVE" ? "● LIVE" : "○ IN DEV"}
-            </span>
-            {p.category === "volunteer" && (
-              <span style={{ background: "#e879a015", color: "#f9a8c9", padding: "3px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: 600, border: "1px solid #e879a030", display: "flex", alignItems: "center", gap: "4px" }}>
-                <Heart size={10} /> PRO BONO
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Body */}
-        <div style={{ padding: "24px 32px 32px" }}>
-          {/* Screenshot placeholder */}
-          <div style={{ background: "#0a0a0a", border: "1px dashed #2a2a2a", borderRadius: "10px", height: "180px", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "24px", color: "#333", fontSize: "13px", fontFamily: "'Commit Mono', monospace" }}>
-            screenshot coming soon
-          </div>
-
-          {/* Tech stack */}
-          <Section title="Tech Stack">
-            <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-              {p.stack.map((t) => (
-                <span key={t} style={{ background: "#1a1a1a", color: "#ccc", padding: "4px 12px", borderRadius: "6px", fontSize: "12px", fontFamily: "'Commit Mono', monospace", border: "1px solid #252525" }}>{t}</span>
-              ))}
-            </div>
-          </Section>
-
-          {/* Infrastructure */}
-          <Section title="Infrastructure">
-            <p style={{ color: "#aaa", fontSize: "13px", lineHeight: 1.6, margin: 0, fontFamily: "'Commit Mono', monospace" }}>{p.infra}</p>
-          </Section>
-
-          {/* Audience */}
-          <Section title="Target Audience">
-            <p style={{ color: "#aaa", fontSize: "14px", lineHeight: 1.6, margin: 0 }}>{p.audience}</p>
-          </Section>
-
-          {/* About */}
-          <Section title="About">
-            <p style={{ color: "#aaa", fontSize: "14px", lineHeight: 1.6, margin: 0 }}>{p.description}</p>
-          </Section>
-
-          {/* Highlights */}
-          <Section title="What went into it">
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              {p.highlights.map((h, i) => (
-                <div key={i} style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
-                  <ChevronRight size={12} color={p.color} style={{ marginTop: "4px", flexShrink: 0 }} />
-                  <span style={{ color: "#bbb", fontSize: "13px", lineHeight: 1.5 }}>{h}</span>
-                </div>
-              ))}
-            </div>
-          </Section>
-
-          {/* CTA */}
-          <a href={p.url} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: p.color, color: "#000", padding: "10px 20px", borderRadius: "8px", textDecoration: "none", fontSize: "13px", fontWeight: 600, fontFamily: "'Commit Mono', monospace" }}>
-            Visit Live Site <ArrowUpRight size={14} />
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-interface SectionProps {
-  title: string;
-  children: React.ReactNode;
-}
-
-function Section({ title, children }: SectionProps) {
-  return (
-    <div style={{ marginBottom: "24px" }}>
-      <h4 style={{ color: "#555", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.12em", margin: "0 0 10px", fontFamily: "'Commit Mono', monospace" }}>{title}</h4>
-      {children}
-    </div>
-  );
-}
-
-/* ════════════════════════════════════════════════
-   MAIN VIEW
-   ════════════════════════════════════════════════ */
-export default function AppShowcase() {
-  const [termOpen, setTermOpen] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [filter, setFilter] = useState("all");
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
-
-  const filtered = filter === "all" ? PROJECTS : PROJECTS.filter((p) => p.category === filter);
-
-  return (
-    <div style={{ background: "#09090b", minHeight: "100vh", color: "#e0e0e0", fontFamily: "var(--font-outfit), 'Helvetica Neue', sans-serif" }}>
-      {/* Subtle dot grid background */}
-      <div style={{ position: "fixed", inset: 0, opacity: 0.04, pointerEvents: "none", backgroundImage: "radial-gradient(circle, #fff 0.5px, transparent 0.5px)", backgroundSize: "24px 24px" }} />
-
-      {/* Nav */}
-      <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(9,9,11,0.8)", backdropFilter: "blur(12px)", borderBottom: "1px solid #1a1a1a", padding: "0 24px" }}>
-        <div style={{ maxWidth: "1100px", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", height: "56px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <span style={{ color: "#4ade80", fontFamily: "'Commit Mono', monospace", fontWeight: 700, fontSize: "15px" }}>~/apps</span>
-            <span style={{ color: "#333", fontSize: "14px" }}>/</span>
-            <span style={{ color: "#666", fontSize: "13px" }}>josh griffith</span>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-            <a href="https://joshjgriffith.com" target="_blank" rel="noopener noreferrer" style={{ color: "#555", display: "flex", alignItems: "center", gap: "4px", fontSize: "13px", textDecoration: "none" }}>
-              <Globe size={13} /> portfolio
-            </a>
-            <a href="https://github.com/vrostbyte" target="_blank" rel="noopener noreferrer" style={{ color: "#555", display: "flex", alignItems: "center", gap: "4px", fontSize: "13px", textDecoration: "none" }}>
-              <Github size={13} /> github
-            </a>
-            <button onClick={() => setTermOpen(true)} style={{ background: "#111", border: "1px solid #2a2a2a", color: "#4ade80", padding: "6px 14px", borderRadius: "6px", cursor: "pointer", fontSize: "12px", fontFamily: "'Commit Mono', monospace", display: "flex", alignItems: "center", gap: "6px", transition: "border-color 0.2s" }}
-              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#4ade80")}
-              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#2a2a2a")}
-            >
-              <TermIcon size={13} /> terminal
-            </button>
-          </div>
-        </div>
-      </nav>
-
-      {/* Hero */}
-      <header style={{ maxWidth: "1100px", margin: "0 auto", padding: "80px 24px 60px" }}>
-        <p style={{ color: "#4ade80", fontFamily: "'Commit Mono', monospace", fontSize: "13px", marginBottom: "16px", letterSpacing: "0.03em" }}>
-          $ ls -la ~/projects
-        </p>
-        <h1 style={{ fontSize: "clamp(32px, 5vw, 50px)", fontWeight: 700, lineHeight: 1.15, margin: "0 0 20px", color: "#f5f5f5", letterSpacing: "-0.02em" }}>
-          Apps I&apos;ve built,<br />
-          <span style={{ color: "#4ade80" }}>shipped</span> & maintain.
         </h1>
         <p style={{ color: "#777", fontSize: "16px", lineHeight: 1.7, maxWidth: "560px", margin: 0 }}>
           Real apps solving real problems. Vibe-coded with AI-assisted development and deployed to production. Some are mine, some I build for others for free.
