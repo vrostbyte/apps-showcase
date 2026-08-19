@@ -69,8 +69,11 @@ interface BaseProject {
 
 export interface PersonalProject extends BaseProject {
   kind: "personal";
-  url: string;
-  /** Whether `url` currently resolves to a live, working app. */
+  /** Live site URL, if one currently exists (some projects never got a public deploy). */
+  url?: string;
+  /** GitHub source, if publicly linkable. */
+  repoUrl?: string;
+  /** Whether `url` currently resolves to a live, working app. Always false when `url` is unset. */
   live: boolean;
   screenshots: Screenshot[];
   demoSteps: ScreenshotStep[];

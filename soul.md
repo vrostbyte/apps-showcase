@@ -24,18 +24,24 @@ Every project is one of two `kind`s, defined in `src/content/types.ts`:
 ### 1. `PersonalProject` — `src/content/personal-projects.ts`
 
 Real apps Josh built and owns (his business, his side projects, pro-bono
-community work). These have a real `url`, real screenshots, and a `live`
-boolean:
+community work). `url` (live site) and `repoUrl` (GitHub source) are both
+**optional** — not every project got a public deploy, and not every repo is
+public — but include whichever actually exist. `live` is a boolean:
 
 - `live: true` — the app still fully works (no Supabase dependency, or a
   static site). Link to it normally, `demoSteps` are a nice-to-have.
-- `live: false` — the backend is retired. The site may still be up but will
-  error on any data call. `demoSteps` become the primary way a visitor
-  experiences it — a `ScreenshotStep[]` walkthrough built from **real**
-  captured screenshots in `public/screenshots/`. A missing screenshot file
-  degrades gracefully to a "screenshot coming soon" placeholder
-  (`ImageFrame` component handles this) — it's fine to reference a
-  screenshot you haven't captured yet, but capture it when you can.
+- `live: false` with a `url` set — the backend is retired. The site may
+  still be up but will error on any data call.
+- `live: false` with no `url` — the project was never publicly deployed at
+  all (a CLI tool, a bot, a local-only tool, or a build that never shipped).
+  Set `repoUrl` if the source is public so there's still something to link.
+
+Whenever `live` is `false`, `demoSteps` become the primary way a visitor
+experiences the project — a `ScreenshotStep[]` walkthrough built from
+**real** captured screenshots in `public/screenshots/`. A missing
+screenshot file degrades gracefully to a "screenshot coming soon"
+placeholder (`ImageFrame` component handles this) — it's fine to reference
+a screenshot you haven't captured yet, but capture it when you can.
 
 To add one: append an object to `PERSONAL_PROJECTS` following the existing
 shape. Write 3-5 `demoSteps` that narrate an actual user flow through the

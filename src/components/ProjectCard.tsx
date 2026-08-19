@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowUpRight, Heart, Lock, Play } from "lucide-react";
+import { ArrowUpRight, GitBranch, Heart, Lock, Play } from "lucide-react";
 import type { Project } from "@/content/types";
 import { ICONS } from "./icons";
 
@@ -37,7 +37,7 @@ export function ProjectCard({ project: p, onSelect }: { project: Project; onSele
               </span>
             ) : (
               <span style={{ background: p.live ? "#16a34a18" : "#71717a18", color: p.live ? "#4ade80" : "#a1a1aa", padding: "2px 8px", borderRadius: "20px", fontSize: "10px", fontWeight: 600, fontFamily: "'Commit Mono', monospace" }}>
-                {p.live ? "● LIVE" : "○ ARCHIVED"}
+                {p.live ? "● LIVE" : p.url ? "○ ARCHIVED" : "○ NO DEPLOY"}
               </span>
             )}
             {p.category === "volunteer" && (
@@ -58,7 +58,7 @@ export function ProjectCard({ project: p, onSelect }: { project: Project; onSele
             <span style={{ color: "#555", fontSize: "11px", fontFamily: "'Commit Mono', monospace" }}>
               internal / not publicly linked
             </span>
-          ) : (
+          ) : p.url ? (
             <a
               href={p.url}
               target="_blank"
@@ -73,6 +73,24 @@ export function ProjectCard({ project: p, onSelect }: { project: Project; onSele
               {p.url.replace(/^https?:\/\//, "")}
               <ArrowUpRight size={10} />
             </a>
+          ) : p.repoUrl ? (
+            <a
+              href={p.repoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: "4px",
+                color: "#777", fontSize: "11px", fontFamily: "'Commit Mono', monospace",
+                textDecoration: "none", opacity: 0.8,
+              }}
+            >
+              <GitBranch size={10} /> source only
+            </a>
+          ) : (
+            <span style={{ color: "#444", fontSize: "11px", fontFamily: "'Commit Mono', monospace" }}>
+              never publicly deployed
+            </span>
           )}
         </div>
 

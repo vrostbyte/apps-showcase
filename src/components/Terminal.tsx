@@ -57,9 +57,9 @@ Projects: ${projects.map((p) => p.slug).join(", ")}`, [projects]);
 
   const formatLs = useCallback(() =>
     projects.map((p) => {
-      const status = p.kind === "work" ? "◆" : p.live ? "●" : "○";
+      const status = p.kind === "work" ? "◆" : p.live ? "●" : p.url ? "○" : "·";
       return `  ${status}  ${p.slug.padEnd(22)} ${p.tagline}`;
-    }).join("\n") + "\n\nUse 'cat <name>' for details. ◆ = confidential, ● = live, ○ = archived.",
+    }).join("\n") + "\n\nUse 'cat <name>' for details. ◆ = confidential, ● = live, ○ = archived, · = never deployed.",
   [projects]);
 
   const formatCat = useCallback((slug: string) => {
@@ -85,8 +85,9 @@ Projects: ${projects.map((p) => p.slug).join(", ")}`, [projects]);
   ${p.name}
   ${p.tagline}
   ${"─".repeat(50)}
-  STATUS:   ${p.live ? "● LIVE" : "○ ARCHIVED"}
-  URL:      ${p.url}
+  STATUS:   ${p.live ? "● LIVE" : p.url ? "○ ARCHIVED" : "○ NEVER DEPLOYED"}
+  URL:      ${p.url ?? "(none — never publicly deployed)"}
+  SOURCE:   ${p.repoUrl ?? "(not public)"}
   STACK:    ${p.stack.join(" / ")}
   INFRA:    ${p.infra}
 
@@ -95,7 +96,7 @@ Projects: ${projects.map((p) => p.slug).join(", ")}`, [projects]);
   HIGHLIGHTS:
 ${p.highlights.map((h) => "  > " + h).join("\n")}
 
-  Type 'open ${slug}' to visit, or see the visual view for a click-through walkthrough.`;
+  Type 'open ${slug}' to visit${p.url ? "" : " (opens source instead)"}, or see the visual view for a click-through walkthrough.`;
   }, [projects]);
 
   const exec = useCallback((raw: string) => {
@@ -114,8 +115,15 @@ ${p.highlights.map((h) => "  > " + h).join("\n")}
         const p = projects.find((x) => x.slug === arg);
         if (!p) { next.push({ type: "output", text: `open: ${arg}: not found` }); break; }
         if (p.kind === "work") { next.push({ type: "output", text: `${p.name} is internal and confidential — not publicly linked. Try the walkthrough in the visual view.` }); break; }
-        next.push({ type: "output", text: `Opening ${p.url}...` });
-        window.open(p.url, "_blank");
+        if (p.url) {
+          next.push({ type: "output", text: `Opening ${p.url}...` });
+          window.open(p.url, "_blank");
+        } else if (p.repoUrl) {
+          next.push({ type: "output", text: `${p.name} was never publicly deployed. Opening source instead: ${p.repoUrl}...` });
+          window.open(p.repoUrl, "_blank");
+        } else {
+          next.push({ type: "output", text: `${p.name} has no public URL — see the walkthrough in the visual view.` });
+        }
         break;
       }
       case "whoami": next.push({ type: "output", text: WHOAMI }); break;

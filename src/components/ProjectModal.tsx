@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight, ChevronRight, Heart, Lock, Play, X } from "lucide-react";
+import { ArrowUpRight, ChevronRight, GitBranch, Heart, Lock, Play, X } from "lucide-react";
 import type { Project } from "@/content/types";
 import { ICONS } from "./icons";
 import { ClickThroughDemo } from "./ClickThroughDemo";
@@ -44,7 +44,7 @@ export function ProjectModal({ project: p, onClose }: { project: Project; onClos
               </span>
             ) : (
               <span style={{ background: p.live ? "#16a34a22" : "#71717a22", color: p.live ? "#4ade80" : "#a1a1aa", padding: "3px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: 600, letterSpacing: "0.05em", border: `1px solid ${p.live ? "#16a34a44" : "#71717a44"}` }}>
-                {p.live ? "● LIVE" : "○ ARCHIVED"}
+                {p.live ? "● LIVE" : p.url ? "○ ARCHIVED" : "○ NEVER DEPLOYED"}
               </span>
             )}
             {p.category === "volunteer" && (
@@ -60,9 +60,14 @@ export function ProjectModal({ project: p, onClose }: { project: Project; onClos
 
         {/* Body */}
         <div style={{ padding: "24px 32px 32px" }}>
-          {!isWork && !p.live && (
+          {!isWork && p.url && !p.live && (
             <div style={{ background: "#0d0d0f", border: "1px solid #222", borderRadius: "10px", padding: "12px 14px", marginBottom: "20px", color: "#888", fontSize: "12.5px", lineHeight: 1.5 }}>
               This app&apos;s backend has been retired, so the live site no longer runs. The walkthrough below is built from real screens to show how it worked.
+            </div>
+          )}
+          {!isWork && !p.url && (
+            <div style={{ background: "#0d0d0f", border: "1px solid #222", borderRadius: "10px", padding: "12px 14px", marginBottom: "20px", color: "#888", fontSize: "12.5px", lineHeight: 1.5 }}>
+              This one never got a public deploy{p.repoUrl ? " — the source is on GitHub" : ""}. The walkthrough below narrates the real build.
             </div>
           )}
           {isWork && (
@@ -118,16 +123,29 @@ export function ProjectModal({ project: p, onClose }: { project: Project; onClos
             </div>
           </Section>
 
-          {!isWork && (
+          {!isWork && (p.url || p.repoUrl) && (
             <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-              <a href={p.url} target="_blank" rel="noopener noreferrer" style={{
-                display: "inline-flex", alignItems: "center", gap: "8px",
-                background: p.color, color: "#000", padding: "10px 20px",
-                borderRadius: "8px", textDecoration: "none", fontSize: "13px",
-                fontWeight: 600, fontFamily: "'Commit Mono', monospace",
-              }}>
-                {p.live ? "Visit Live Site" : "Visit Site (offline)"} <ArrowUpRight size={14} />
-              </a>
+              {p.url && (
+                <a href={p.url} target="_blank" rel="noopener noreferrer" style={{
+                  display: "inline-flex", alignItems: "center", gap: "8px",
+                  background: p.color, color: "#000", padding: "10px 20px",
+                  borderRadius: "8px", textDecoration: "none", fontSize: "13px",
+                  fontWeight: 600, fontFamily: "'Commit Mono', monospace",
+                }}>
+                  {p.live ? "Visit Live Site" : "Visit Site (offline)"} <ArrowUpRight size={14} />
+                </a>
+              )}
+              {p.repoUrl && (
+                <a href={p.repoUrl} target="_blank" rel="noopener noreferrer" style={{
+                  display: "inline-flex", alignItems: "center", gap: "8px",
+                  background: "transparent", color: "#ccc", padding: "10px 20px",
+                  borderRadius: "8px", textDecoration: "none", fontSize: "13px",
+                  fontWeight: 600, fontFamily: "'Commit Mono', monospace",
+                  border: "1px solid #2a2a2a",
+                }}>
+                  <GitBranch size={14} /> View Source
+                </a>
+              )}
             </div>
           )}
         </div>
