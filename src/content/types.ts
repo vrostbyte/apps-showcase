@@ -60,7 +60,16 @@ interface BaseProject {
   color: string;
   icon: IconName;
   infra: string;
+  /**
+   * The click-through walkthrough. Mix of step kinds is fine — a project can
+   * open with real screenshots and close with a diagram, or vice versa.
+   * Required whenever any step has kind "diagram".
+   */
   demoSteps: DemoStep[];
+  diagram?: {
+    nodes: DiagramNode[];
+    edges: DiagramEdge[];
+  };
 }
 
 /* ════════════════════════════════════════════════
@@ -76,7 +85,6 @@ export interface PersonalProject extends BaseProject {
   /** Whether `url` currently resolves to a live, working app. Always false when `url` is unset. */
   live: boolean;
   screenshots: Screenshot[];
-  demoSteps: ScreenshotStep[];
 }
 
 /* ════════════════════════════════════════════════
@@ -96,7 +104,6 @@ export interface WorkProject extends BaseProject {
     nodes: DiagramNode[];
     edges: DiagramEdge[];
   };
-  demoSteps: DiagramStep[];
 }
 
 export type Project = PersonalProject | WorkProject;

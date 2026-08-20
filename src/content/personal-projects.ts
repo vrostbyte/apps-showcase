@@ -39,7 +39,6 @@ export const PERSONAL_PROJECTS: PersonalProject[] = [
     screenshots: [
       { src: "/screenshots/lasso-hero.png", caption: "Landing page and brand presence" },
       { src: "/screenshots/lasso-booking.png", caption: "Event booking inquiry flow" },
-      { src: "/screenshots/lasso-admin.png", caption: "Admin dashboard with event pipeline" },
     ],
     demoSteps: [
       {
@@ -52,13 +51,7 @@ export const PERSONAL_PROJECTS: PersonalProject[] = [
         kind: "screenshot",
         image: "/screenshots/lasso-booking.png",
         title: "Booking inquiry",
-        caption: "They submit an event date, guest count, and venue — this kicks off a quote request instead of an instant checkout, since every event gets a custom menu proposal.",
-      },
-      {
-        kind: "screenshot",
-        image: "/screenshots/lasso-admin.png",
-        title: "Admin pipeline",
-        caption: "Behind the scenes, the inquiry lands in an admin pipeline (inquiry → quote sent → booked → day-of) so nothing falls through the cracks between events.",
+        caption: "They submit an event date, guest count, and venue — this kicks off a quote request instead of an instant checkout, since every event gets a custom menu proposal. Behind the scenes it lands in an admin pipeline (inquiry → quote sent → booked → day-of) so nothing falls through the cracks between events.",
       },
     ],
   },
@@ -88,6 +81,7 @@ export const PERSONAL_PROJECTS: PersonalProject[] = [
     icon: "flag",
     infra: "Supabase (public schema) + shared project with Periwinkel (tripatlas schema) — retired.",
     screenshots: [
+      { src: "/screenshots/myflagcoach-login.png", caption: "Sign-in screen" },
       { src: "/screenshots/flagcoach-dashboard.png", caption: "Team dashboard and overview" },
       { src: "/screenshots/flagcoach-playdesigner.png", caption: "Visual play designer with formation diagram" },
       { src: "/screenshots/flagcoach-playbook.png", caption: "Playbook list with play cards" },
@@ -95,6 +89,12 @@ export const PERSONAL_PROJECTS: PersonalProject[] = [
       { src: "/screenshots/flagcoach-mobile.png", caption: "Mobile play sheet for sideline use" },
     ],
     demoSteps: [
+      {
+        kind: "screenshot",
+        image: "/screenshots/myflagcoach-login.png",
+        title: "Sign in",
+        caption: "A coach starts at the real sign-in screen — this one's a live capture, not a mockup. Everything past this point (the backend it authenticates against) is retired, so the rest of the walkthrough is narrated from the real feature set instead of live screens.",
+      },
       {
         kind: "screenshot",
         image: "/screenshots/flagcoach-dashboard.png",
@@ -147,12 +147,25 @@ export const PERSONAL_PROJECTS: PersonalProject[] = [
     icon: "compass",
     infra: "Supabase (tripatlas schema on shared MyFlagCoach project) + Resend for emails — retired.",
     screenshots: [
+      { src: "/screenshots/periwinkel-code-entry.png", caption: "Trip code entry — how parents get in" },
+      { src: "/screenshots/periwinkel-login.png", caption: "Trip leader sign-in" },
       { src: "/screenshots/periwinkel-overview.png", caption: "Trip overview with itinerary" },
       { src: "/screenshots/periwinkel-map.png", caption: "Map view with stop pins" },
-      { src: "/screenshots/periwinkel-sharing.png", caption: "Access code and parent sharing" },
       { src: "/screenshots/periwinkel-mobile.png", caption: "Mobile stop detail with photos" },
     ],
     demoSteps: [
+      {
+        kind: "screenshot",
+        image: "/screenshots/periwinkel-code-entry.png",
+        title: "Sharing without an account",
+        caption: "Parents get a short access code instead of an account — enter it here and get a read-only view of the trip, no signup required. This screen is a live capture; it needs no backend to render.",
+      },
+      {
+        kind: "screenshot",
+        image: "/screenshots/periwinkel-login.png",
+        title: "Trip leader sign in",
+        caption: "The trip leader signs in separately to build and update the itinerary. Also a live capture — the app's shell renders fine, it's the data behind login that's retired.",
+      },
       {
         kind: "screenshot",
         image: "/screenshots/periwinkel-overview.png",
@@ -164,12 +177,6 @@ export const PERSONAL_PROJECTS: PersonalProject[] = [
         image: "/screenshots/periwinkel-map.png",
         title: "Map view",
         caption: "The itinerary renders as a map with pins in order, so anyone can see where the group is headed next.",
-      },
-      {
-        kind: "screenshot",
-        image: "/screenshots/periwinkel-sharing.png",
-        title: "Sharing without an account",
-        caption: "Parents get a short access code instead of an account — enter it once and get a read-only view of the trip, no signup required.",
       },
       {
         kind: "screenshot",
@@ -423,23 +430,44 @@ export const PERSONAL_PROJECTS: PersonalProject[] = [
     ],
     color: "#A78BFA",
     icon: "sword",
-    infra: "Node.js bot process (discord.js) + Firebase for persistence, deployed via Express — not currently running.",
-    screenshots: [
-      { src: "/screenshots/inkbound-combat.png", caption: "Turn-based combat via slash commands" },
-      { src: "/screenshots/inkbound-market.png", caption: "Player-driven market economy" },
-    ],
+    infra: "Node.js bot process (discord.js) + Firebase for persistence, deployed via Express — not currently running. There's no web UI to screenshot (it's entirely Discord slash commands), so this one's demoed as an architecture diagram instead.",
+    screenshots: [],
+    diagram: {
+      nodes: [
+        { id: "player", label: "Player", sublabel: "Discord client", icon: "message-square", x: 8, y: 50 },
+        { id: "gateway", label: "Discord Gateway", sublabel: "WebSocket", icon: "network", x: 30, y: 25 },
+        { id: "bot", label: "Bot process", sublabel: "discord.js", icon: "bot", x: 52, y: 50 },
+        { id: "commands", label: "Command handlers", sublabel: "combat / craft / market / guild", icon: "sword", x: 76, y: 25 },
+        { id: "firestore", label: "Firestore", sublabel: "player + economy state", icon: "database", x: 76, y: 75 },
+      ],
+      edges: [
+        { from: "player", to: "gateway" },
+        { from: "gateway", to: "bot" },
+        { from: "bot", to: "commands" },
+        { from: "bot", to: "firestore" },
+      ],
+    },
     demoSteps: [
       {
-        kind: "screenshot",
-        image: "/screenshots/inkbound-combat.png",
-        title: "/explore and /combat",
-        caption: "A player explores a biome and drops into turn-based combat — basic attacks plus a 4-slot trained loadout and an ultimate meter.",
+        kind: "diagram",
+        title: "A player types a command",
+        caption: "A slash command like /explore or /attack goes through Discord's gateway to the bot process — no separate app to open, the session lives entirely inside Discord.",
+        activeNodeIds: ["player", "gateway", "bot"],
+        activeEdgeIndexes: [0, 1],
       },
       {
-        kind: "screenshot",
-        image: "/screenshots/inkbound-market.png",
-        title: "/gather, /craft, /market",
-        caption: "Materials gathered through profession commands feed into crafting, and surplus gear gets listed on a player-driven, taxed market.",
+        kind: "diagram",
+        title: "Routed to a handler",
+        caption: "40+ command handlers cover combat, crafting, gathering, the player market, and guilds — each one a focused module, not a monolith.",
+        activeNodeIds: ["bot", "commands"],
+        activeEdgeIndexes: [2],
+      },
+      {
+        kind: "diagram",
+        title: "State persists",
+        caption: "Player stats, inventory, and the shared market economy read/write to Firestore, so a 60-second session picks up exactly where the last one left off.",
+        activeNodeIds: ["bot", "firestore"],
+        activeEdgeIndexes: [3],
       },
     ],
   },
@@ -506,23 +534,44 @@ export const PERSONAL_PROJECTS: PersonalProject[] = [
     ],
     color: "#FCD34D",
     icon: "users",
-    infra: "React + Vite frontend, Firebase (Firestore) backend, Google Maps for the location layer.",
-    screenshots: [
-      { src: "/screenshots/diapershare-map.png", caption: "Map of nearby give/need posts" },
-      { src: "/screenshots/diapershare-post.png", caption: "Posting a listing" },
-    ],
+    infra: "React + Vite frontend, Firebase (Firestore) backend, Google Maps for the location layer. Demoed as a diagram rather than screenshots — it's wired to a real Firebase project with community data, so we don't connect an automated capture to it.",
+    screenshots: [],
+    diagram: {
+      nodes: [
+        { id: "parent", label: "Parent", icon: "message-square", x: 8, y: 50 },
+        { id: "app", label: "Web app", sublabel: "React + Vite", icon: "monitor", x: 32, y: 50 },
+        { id: "maps", label: "Map layer", sublabel: "Google Maps", icon: "map-pin", x: 58, y: 25 },
+        { id: "auth", label: "Auth", sublabel: "Firebase Auth", icon: "shield-check", x: 58, y: 75 },
+        { id: "firestore", label: "Firestore", sublabel: "listings, realtime", icon: "database", x: 85, y: 50 },
+      ],
+      edges: [
+        { from: "parent", to: "app" },
+        { from: "app", to: "maps" },
+        { from: "app", to: "auth" },
+        { from: "app", to: "firestore" },
+      ],
+    },
     demoSteps: [
       {
-        kind: "screenshot",
-        image: "/screenshots/diapershare-map.png",
+        kind: "diagram",
         title: "Browse nearby",
         caption: "A parent opens the map and sees nearby posts — someone giving away a half-used box of size 4s, someone else asking for size 2.",
+        activeNodeIds: ["parent", "app", "maps"],
+        activeEdgeIndexes: [0, 1],
       },
       {
-        kind: "screenshot",
-        image: "/screenshots/diapershare-post.png",
-        title: "Post a listing",
-        caption: "Posting takes under a minute: what you have or need, roughly where, and how to connect — the same thing that Facebook post did, but discoverable by anyone nearby, anytime.",
+        kind: "diagram",
+        title: "Sign in",
+        caption: "A lightweight Firebase Auth flow — just enough identity to post and message, not a full profile system.",
+        activeNodeIds: ["app", "auth"],
+        activeEdgeIndexes: [2],
+      },
+      {
+        kind: "diagram",
+        title: "Post or request",
+        caption: "Posting takes under a minute: what you have or need, roughly where, and how to connect — the same thing that Facebook post did, but discoverable by anyone nearby, anytime, backed by realtime Firestore.",
+        activeNodeIds: ["app", "firestore"],
+        activeEdgeIndexes: [3],
       },
     ],
   },
@@ -549,14 +598,21 @@ export const PERSONAL_PROJECTS: PersonalProject[] = [
     icon: "gamepad-2",
     infra: "A single bash script. Runs anywhere bash runs — no install, no dependencies.",
     screenshots: [
+      { src: "/screenshots/bash-rpg-town.png", caption: "Character sheet and town menu" },
       { src: "/screenshots/bash-rpg-combat.png", caption: "Turn-based combat in the terminal" },
     ],
     demoSteps: [
       {
         kind: "screenshot",
+        image: "/screenshots/bash-rpg-town.png",
+        title: "Character sheet",
+        caption: "`./rpg_game.sh` drops you into character creation — Warrior, Mage, Rogue, or Paladin — then the town hub with a live HP/MP/gold HUD. This is a real captured session, not a mockup.",
+      },
+      {
+        kind: "screenshot",
         image: "/screenshots/bash-rpg-combat.png",
-        title: "Pick a class, start exploring",
-        caption: "`./rpg_game.sh` drops you into character creation — Warrior, Mage, Rogue, or Paladin — then straight into a colored terminal exploration/combat loop.",
+        title: "Turn-based combat",
+        caption: "Exploring the forest triggers a real encounter — attack, skills, items, or flee, same as any turn-based RPG, just rendered entirely in ANSI text.",
       },
     ],
   },
@@ -581,12 +637,19 @@ export const PERSONAL_PROJECTS: PersonalProject[] = [
     ],
     color: "#FDE047",
     icon: "dice-5",
-    infra: "React + Firebase (Firestore, Auth, Hosting) — not currently deployed.",
+    infra: "React + Firebase (Firestore, Auth, Hosting) — still wired to a real Firebase project, so the walkthrough stops at the login screen rather than authenticating into real game data.",
     screenshots: [
+      { src: "/screenshots/lasso-bingo-login.png", caption: "Host login" },
       { src: "/screenshots/lasso-bingo-dashboard.png", caption: "Host dashboard and game setup" },
       { src: "/screenshots/lasso-bingo-public.png", caption: "Public spectator view for the room screen" },
     ],
     demoSteps: [
+      {
+        kind: "screenshot",
+        image: "/screenshots/lasso-bingo-login.png",
+        title: "Host login",
+        caption: "A real captured screen — the host login gate. Past this point is authenticated game data, so the rest of this walkthrough is narrated rather than screenshotted.",
+      },
       {
         kind: "screenshot",
         image: "/screenshots/lasso-bingo-dashboard.png",

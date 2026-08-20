@@ -77,7 +77,7 @@ export function ProjectModal({ project: p, onClose }: { project: Project; onClos
           )}
 
           <div style={{ marginBottom: "24px" }}>
-            <ClickThroughDemo steps={p.demoSteps} color={p.color} diagram={isWork ? p.diagram : undefined} />
+            <ClickThroughDemo steps={p.demoSteps} color={p.color} diagram={p.diagram} />
           </div>
 
           <Section title="Tech Stack">
