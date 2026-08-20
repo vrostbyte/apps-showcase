@@ -1,10 +1,11 @@
 "use client";
 
-import { ArrowUpRight, ChevronRight, GitBranch, Heart, Lock, Play, X } from "lucide-react";
+import { ArrowUpRight, ChevronRight, GitBranch, Heart, Lock, Play, X, Zap } from "lucide-react";
 import type { Project } from "@/content/types";
+import { CATEGORY_IDENTITY } from "@/content/categories";
 import { ICONS } from "./icons";
 import { ClickThroughDemo } from "./ClickThroughDemo";
-import { getCardRarity, getCardTypeLine, getManaPipCount, RARITY_BORDER } from "./cards/cardType";
+import { GEM_COLOR, getBuildCost, getReach, getRarityGem, getTypeLabel, getUptimeTier } from "./cards/cardType";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -20,14 +21,17 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 export function ProjectModal({ project: p, onClose }: { project: Project; onClose: () => void }) {
   const IconComp = ICONS[p.icon];
   const isWork = p.kind === "work";
-  const rarity = getCardRarity(p);
-  const pipCount = getManaPipCount(p);
+  const identity = CATEGORY_IDENTITY[p.category];
+  const rarity = getRarityGem(p);
+  const buildCost = getBuildCost(p);
+  const reach = getReach(p);
+  const uptime = getUptimeTier(p);
 
   return (
     <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 900, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}>
-      <div onClick={(e) => e.stopPropagation()} style={{ maxWidth: "640px", width: "100%", maxHeight: "85vh", borderRadius: "17px", padding: "3px", backgroundImage: RARITY_BORDER[rarity] }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ maxWidth: "640px", width: "100%", maxHeight: "85vh", borderRadius: "17px", padding: "3px", background: `linear-gradient(150deg, ${identity.frame[0]}, ${identity.frame[1]} 55%, ${identity.frame[2]})` }}>
       <div style={{ background: "#111", border: "1px solid #222", borderRadius: "15px", width: "100%", maxHeight: "calc(85vh - 6px)", overflowY: "auto", position: "relative" }}>
-        {/* Header — reads as an oversized card face: name, mana pips, type line */}
+        {/* Header — reads as an oversized card face: name, mana pips, type line, stat plate */}
         <div style={{ padding: "32px 32px 20px", background: `linear-gradient(135deg, ${p.color}12 0%, #111 60%)`, borderRadius: "15px 15px 0 0" }}>
           <button onClick={onClose} style={{ position: "absolute", top: "16px", right: "16px", background: "#1a1a1a", border: "1px solid #333", color: "#888", width: "32px", height: "32px", borderRadius: "8px", cursor: "pointer", fontSize: "16px", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1 }}>
             <X size={14} />
@@ -38,20 +42,33 @@ export function ProjectModal({ project: p, onClose }: { project: Project; onClos
             </div>
             <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "10px" }}>
               <div>
-                <h2 style={{ margin: 0, color: "#f0f0f0", fontSize: "22px", fontFamily: "'Commit Mono', 'IBM Plex Mono', monospace", fontWeight: 700 }}>{p.name}</h2>
+                <h2 style={{ margin: 0, color: "#f0f0f0", fontSize: "22px", fontFamily: "var(--font-space-grotesk), 'Outfit', sans-serif", fontWeight: 700 }}>{p.name}</h2>
                 <p style={{ margin: "2px 0 0", color: "#888", fontSize: "14px" }}>{p.tagline}</p>
               </div>
-              <div style={{ display: "flex", gap: "3px", flexShrink: 0, marginTop: "6px" }}>
-                {Array.from({ length: pipCount }).map((_, i) => (
+              <div style={{ display: "flex", gap: "3px", flexShrink: 0, marginTop: "6px" }} title={`Build cost: ${buildCost}`}>
+                {Array.from({ length: buildCost }).map((_, i) => (
                   <span key={i} style={{ width: "8px", height: "8px", borderRadius: "50%", background: p.color, opacity: 0.9 }} />
                 ))}
               </div>
             </div>
           </div>
-          <div style={{ display: "inline-block", padding: "3px 9px", background: "#1c1c1f", border: "1px solid #2a2a2a", borderRadius: "4px", marginBottom: "2px" }}>
-            <span style={{ color: "#999", fontSize: "10.5px", fontFamily: "'Commit Mono', monospace", letterSpacing: "0.02em" }}>
-              {getCardTypeLine(p)}
-            </span>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "2px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", padding: "3px 9px", background: "#1c1c1f", border: "1px solid #2a2a2a", borderRadius: "4px" }}>
+              <span style={{ color: "#999", fontSize: "10.5px", fontFamily: "'Commit Mono', monospace", letterSpacing: "0.02em" }}>
+                {getTypeLabel(p)}
+              </span>
+              <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: GEM_COLOR[rarity] }} title={rarity} />
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <span style={{ display: "flex", alignItems: "center", gap: "3px", color: "#999", fontSize: "11px", fontFamily: "'Commit Mono', monospace" }} title={`Reach: ${reach} real capabilities`}>
+                <Zap size={10} color={p.color} /> {reach}
+              </span>
+              <span style={{ display: "flex", gap: "2px" }} title={`Uptime: ${uptime}/3`}>
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <span key={i} style={{ width: "5px", height: "5px", borderRadius: "50%", background: i < uptime ? p.color : "#333" }} />
+                ))}
+              </span>
+            </div>
           </div>
           <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "14px" }}>
             {isWork ? (

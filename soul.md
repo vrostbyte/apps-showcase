@@ -81,36 +81,54 @@ worse than an honest placeholder.
 
 ## The card binder (default view)
 
-The homepage's default view is a Magic: The Gathering-style trading card
-binder (`src/components/cards/`), not a grid or a graph — every project
-renders as its own card (name, mana pips, art box, type line, rules text,
-flavor text), grouped into sections by **card type**, with a cursor-tracked
-3D tilt + holographic shine on hover.
+The homepage's default view is a trading-card binder (`src/components/cards/`),
+not a grid or a graph — every project renders as its own card (name, mana
+pips, art box, type line, rules text, flavor text, a Reach/Uptime stat
+plate), grouped into sections by the site's own **categories** — never by
+literal Magic: The Gathering type words like "Creature" or "Artifact". The
+MTG *system* (color-identity frames, mana pips, a rarity gem, stat boxes)
+is the inspiration; the section labels and card copy are always this site's
+own language.
 
-**Card type is derived, never stored.** `src/components/cards/cardType.ts`
-maps `project.category` → a card type via `getCardType()`:
+**Category identity is the single source of truth**, in
+`src/content/categories.ts` (`CATEGORY_IDENTITY`). It replaces the old
+per-file `CATEGORY_META` — the homepage filter bar, the binder's section
+dividers, and every card's frame color all read from this one place, so
+there's nothing to keep in sync by hand:
 
-| `category`  | Card type    | Section label |
-|---|---|---|
-| `app`       | Creature     | Creatures |
-| `business`  | Land         | Lands |
-| `volunteer` | Enchantment  | Enchantments |
-| `work`      | Artifact     | Artifacts |
+| `category`  | Label | Card frame | Section role |
+|---|---|---|---|
+| `app`       | Apps | ember (orange → near-black) | shipped, live, aggressive |
+| `business`  | My Business | verdant (green → near-black) | commerce, growth |
+| `volunteer` | Community Builds | rose (pink → near-black) | care, support |
+| `work`      | Work (Confidential) | violet (violet → near-black) | guarded, redacted |
 
 Adding a project to `PERSONAL_PROJECTS` or `WORK_PROJECTS` is enough — it
-gets a card type, a binder section, and a rarity border for free. **You never
-pick a card type or hand-place a card by hand.** If a 5th category is ever
-added to `ProjectCategory`, add one row to `CATEGORY_TO_CARD_TYPE` in
-`cardType.ts` (and to `CATEGORY_META` in `page.tsx`, per "Adding a category"
-below) — that's the only place this mapping lives.
+gets a binder section, a card frame, and every stat below for free. **You
+never pick a color or hand-place a card.** If a 5th category is ever added
+to `ProjectCategory`, add one entry to `CATEGORY_IDENTITY` — that's the only
+place this mapping lives now (page.tsx's filter bar imports it directly).
 
-Every other card field reuses existing data, nothing new to fill in:
-mana pips = `stack.length` (clamped 3-6), rules text = `description`,
-ability bullets = `highlights`, flavor text (italic) = `tagline`. Rarity
-border is derived from status via `getCardRarity()` — confidential work is
-always "mythic" (rarest/most guarded); a still-working live personal app is
-"holo" (the shiniest — least common state on this site); archived-with-a-url
-is "uncommon"; never-deployed is "common".
+Individual `project.color` is a second, separate layer — it's the *accent*
+(icon tile tint, mana-pip fill, ability-bullet glyph) that keeps cards
+inside the same section visually distinct from each other. Don't conflate
+the two: category governs the frame, `color` governs the accent.
+
+**Every number on a card is derived, and each one has one specific,
+intentional meaning** — see `src/components/cards/cardType.ts`:
+
+| Card element | Meaning | Derivation |
+|---|---|---|
+| Mana pips (top right) | **Build cost** — how much tech went into it | `stack.length`, clamped 3-6 |
+| Left stat | **Reach** — how many real things it does | `highlights.length` |
+| Right stat | **Uptime** — how alive it is right now | 3 = live (or a confidential tool, presumed in active use) / 2 = archived-with-a-url / 1 = never deployed |
+| Rarity gem (in the type line) | How rare this state is on the site | work → mythic, live → rare, archived-url → uncommon, never-deployed → common — real MTG rarity-color convention: orange-red/gold/silver/black |
+| Rules text | The actual feature description | `description` |
+| Ability bullets | Real capabilities | `highlights` |
+| Flavor text (italic) | The one-line pitch | `tagline` |
+
+Don't invent a new number for a card without giving it the same treatment:
+one real, derived meaning, documented here, never a decorative stat.
 
 **Art box falls back to icon-on-color automatically.** If
 `screenshots[0].src` exists (a `PersonalProject` with real captured
@@ -124,8 +142,8 @@ fallback is the intended look, not a stopgap.
 The card grid still exists as the "list" view (a toggle next to the category
 filter) — unchanged, still driven by the same `ALL_PROJECTS`. Both views open
 the same `ProjectModal`, whose header is restyled to read as an oversized
-version of the clicked card (rarity border, mana pips, type line) — the body
-sections below it are unaffected by any of this.
+version of the clicked card (category frame, mana pips, type line, rarity
+gem, stat plate) — the body sections below it are unaffected by any of this.
 
 ### The constellation (retired, code kept)
 
@@ -163,11 +181,16 @@ the import + entry there first.
 - `src/app/page.tsx` — top-level layout, category filter, cards/list toggle,
   terminal easter egg. Reads from `ALL_PROJECTS` (`PERSONAL_PROJECTS` +
   `WORK_PROJECTS` concatenated).
+- `src/content/categories.ts` — `CATEGORY_IDENTITY`, the single source of
+  truth for each category's label, icon, description, frame gradient, and
+  glow color. Read by `page.tsx` (filter bar) and `src/components/cards/`
+  (section dividers, card frames) — never duplicate this elsewhere.
 - `src/components/cards/` — the default cards view: `CardBinder` (groups
-  `ALL_PROJECTS` by `getCardType`, renders sections), `TradingCard` (one
-  card face), `cardType.ts` (the derivation table + rarity/mana-pip logic,
-  pure functions), `useTiltEffect` (cursor tilt + holo shine hook, no new
-  deps — CSS custom properties written via a ref, not React state).
+  `ALL_PROJECTS` by `project.category`, renders binder-tab sections from
+  `categories.ts`), `TradingCard` (one card face), `cardType.ts` (the
+  build-cost/reach/uptime/rarity-gem derivation functions, pure), `useTiltEffect`
+  (cursor tilt + holo shine hook, no new deps — CSS custom properties written
+  via a ref, not React state).
 - `src/components/constellation/` — retired map view, still in the repo but
   unused in `page.tsx` (see "The constellation (retired, code kept)" above).
 - `src/components/ProjectCard.tsx` — the list-view tile.
@@ -183,8 +206,9 @@ the import + entry there first.
 ## Adding a category
 
 Categories live in `ProjectCategory` (`src/content/types.ts`) and
-`CATEGORY_META` (`src/app/page.tsx`). Add to both if a project doesn't fit
-`app` / `business` / `volunteer` / `work`.
+`CATEGORY_IDENTITY` (`src/content/categories.ts`). Add to both if a project
+doesn't fit `app` / `business` / `volunteer` / `work` — give the new entry
+its own frame gradient and glow color, distinct from the existing four.
 
 ## Before you commit
 
