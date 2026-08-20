@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { GitBranch, Globe, Terminal as TermIcon } from "lucide-react";
+import { GitBranch, Globe, LayoutGrid, Terminal as TermIcon, Waypoints } from "lucide-react";
 import { PERSONAL_PROJECTS } from "@/content/personal-projects";
 import { WORK_PROJECTS } from "@/content/work-projects";
+import { RELATIONSHIPS } from "@/content/relationships";
 import type { CategoryMeta, Project, ProjectCategory } from "@/content/types";
 import { ICONS } from "@/components/icons";
 import { ProjectCard } from "@/components/ProjectCard";
 import { ProjectModal } from "@/components/ProjectModal";
 import { Terminal } from "@/components/Terminal";
+import { ConstellationGraph } from "@/components/constellation/ConstellationGraph";
 
 const ALL_PROJECTS: Project[] = [...PERSONAL_PROJECTS, ...WORK_PROJECTS];
 
@@ -24,6 +26,7 @@ export default function AppShowcase() {
   const [termOpen, setTermOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [filter, setFilter] = useState<"all" | ProjectCategory>("all");
+  const [view, setView] = useState<"map" | "list">("map");
 
   const filtered = filter === "all" ? ALL_PROJECTS : ALL_PROJECTS.filter((p) => p.category === filter);
 
@@ -66,7 +69,7 @@ export default function AppShowcase() {
         </p>
       </header>
 
-      <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 24px 40px" }}>
+      <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 24px 24px", display: "flex", flexWrap: "wrap", gap: "12px", justifyContent: "space-between", alignItems: "center" }}>
         <div style={{ display: "flex", gap: "4px", background: "#111", borderRadius: "8px", padding: "4px", width: "fit-content", flexWrap: "wrap", border: "1px solid #1a1a1a" }}>
           {(Object.entries(CATEGORY_META) as [keyof typeof CATEGORY_META, CategoryMeta][]).map(([key, { label, icon }]) => {
             const CatIcon = ICONS[icon];
@@ -85,15 +88,50 @@ export default function AppShowcase() {
             );
           })}
         </div>
-      </div>
 
-      <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 24px 100px" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "16px" }}>
-          {filtered.map((p) => (
-            <ProjectCard key={p.slug} project={p} onSelect={() => setSelectedProject(p)} />
-          ))}
+        <div style={{ display: "flex", gap: "4px", background: "#111", borderRadius: "8px", padding: "4px", border: "1px solid #1a1a1a" }}>
+          <button onClick={() => setView("map")} aria-label="Map view" style={{
+            background: view === "map" ? "#1f1f1f" : "transparent",
+            border: "none", color: view === "map" ? "#4ade80" : "#555",
+            padding: "6px 12px", borderRadius: "6px", cursor: "pointer",
+            fontSize: "12px", fontWeight: view === "map" ? 600 : 400,
+            fontFamily: "'Commit Mono', monospace",
+            display: "flex", alignItems: "center", gap: "5px",
+          }}>
+            <Waypoints size={12} /> map
+          </button>
+          <button onClick={() => setView("list")} aria-label="List view" style={{
+            background: view === "list" ? "#1f1f1f" : "transparent",
+            border: "none", color: view === "list" ? "#4ade80" : "#555",
+            padding: "6px 12px", borderRadius: "6px", cursor: "pointer",
+            fontSize: "12px", fontWeight: view === "list" ? 600 : 400,
+            fontFamily: "'Commit Mono', monospace",
+            display: "flex", alignItems: "center", gap: "5px",
+          }}>
+            <LayoutGrid size={12} /> list
+          </button>
         </div>
       </div>
+
+      {view === "map" ? (
+        <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 24px 100px" }}>
+          <div style={{ height: "min(75vh, 760px)" }}>
+            <ConstellationGraph
+              projects={filtered}
+              relationships={RELATIONSHIPS}
+              onSelect={setSelectedProject}
+            />
+          </div>
+        </div>
+      ) : (
+        <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 24px 100px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "16px" }}>
+            {filtered.map((p) => (
+              <ProjectCard key={p.slug} project={p} onSelect={() => setSelectedProject(p)} />
+            ))}
+          </div>
+        </div>
+      )}
 
       <footer style={{ borderTop: "1px solid #1a1a1a", padding: "24px", textAlign: "center", color: "#333", fontSize: "12px", fontFamily: "'Commit Mono', monospace" }}>
         vibe coded with care // josh griffith // {new Date().getFullYear()}
