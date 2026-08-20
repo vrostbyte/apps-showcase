@@ -79,6 +79,40 @@ it solved, what stack, what outcome), **ask, don't invent them**. A
 plausible-sounding fabrication about someone's real professional work is
 worse than an honest placeholder.
 
+## The constellation (map view)
+
+The homepage's default view is a star map (`src/components/constellation/`),
+not a grid — every project is a node, positioned automatically by a force
+simulation (`useForceLayout.ts`) clustered loosely by `category`. **You never
+place a node's (x, y) by hand.** Adding a project to `PERSONAL_PROJECTS` or
+`WORK_PROJECTS` is enough; it appears on the map on its own.
+
+If the new project has a real relationship to an existing one — it's a
+rewrite of it, a pivot away from it, or it shares live infrastructure with
+it — add one entry to `src/content/relationships.ts` (`{ from, to, kind,
+label? }`, `kind` one of `"pivot" | "rebuild" | "shared-infra"`). That's the
+only place relationships live; don't duplicate them on the project objects
+themselves. Skip it if there's no real connection — most projects have none,
+and that's fine.
+
+The card grid still exists as the "list" view (a toggle next to the category
+filter) — unchanged, still driven by the same `ALL_PROJECTS`. Both views open
+the same `ProjectModal`.
+
+A project can also carry a `diagram`-based walkthrough (not just work
+projects) — see the `BaseProject.diagram` / `demoSteps: DemoStep[]` shape in
+`src/content/types.ts`. Use it for a personal project with no real UI to
+screenshot (a bot, a CLI, anything that never got a public deploy and has
+nothing visual to capture) — same `ArchitectureDiagram` component the
+confidential work projects use, same convention: 4-8 nodes, 3-5 steps.
+
+**Never point an automated screenshot/browser capture at a project's real
+backend** if you don't know its data-exposure posture (open Firestore/DB
+rules, real user data, etc.) — diagram it instead. DiaperShare in
+`personal-projects.ts` is the example: it's got a real, live Firebase
+project committed to its repo with wide-open rules, so it's diagrammed on
+purpose, not screenshotted.
+
 ## Icons
 
 Content files are plain data — no JSX, no direct `lucide-react` imports.
@@ -88,10 +122,14 @@ the import + entry there first.
 
 ## Where things render
 
-- `src/app/page.tsx` — top-level layout, category filter, grid of
-  `ProjectCard`s, terminal easter egg. Reads from `ALL_PROJECTS`
-  (`PERSONAL_PROJECTS` + `WORK_PROJECTS` concatenated).
-- `src/components/ProjectCard.tsx` — the grid tile.
+- `src/app/page.tsx` — top-level layout, category filter, map/list toggle,
+  terminal easter egg. Reads from `ALL_PROJECTS` (`PERSONAL_PROJECTS` +
+  `WORK_PROJECTS` concatenated).
+- `src/components/constellation/` — the map view: `ConstellationGraph`
+  (pan/zoom + rendering), `useForceLayout` (layout, pure/deterministic —
+  no `Math.random`), `ProjectStar`, `ConstellationEdge`, `StarField`
+  (decorative background only).
+- `src/components/ProjectCard.tsx` — the list-view tile.
 - `src/components/ProjectModal.tsx` — the detail view; branches on
   `project.kind` for a few sections (work projects show Problem/Outcome,
   personal projects show a live/archived link).
