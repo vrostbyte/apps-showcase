@@ -4,6 +4,7 @@ import { ArrowUpRight, ChevronRight, GitBranch, Heart, Lock, Play, X } from "luc
 import type { Project } from "@/content/types";
 import { ICONS } from "./icons";
 import { ClickThroughDemo } from "./ClickThroughDemo";
+import { getCardRarity, getCardTypeLine, getManaPipCount, RARITY_BORDER } from "./cards/cardType";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -19,25 +20,40 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 export function ProjectModal({ project: p, onClose }: { project: Project; onClose: () => void }) {
   const IconComp = ICONS[p.icon];
   const isWork = p.kind === "work";
+  const rarity = getCardRarity(p);
+  const pipCount = getManaPipCount(p);
 
   return (
     <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 900, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}>
-      <div onClick={(e) => e.stopPropagation()} style={{ background: "#111", border: "1px solid #222", borderRadius: "16px", maxWidth: "640px", width: "100%", maxHeight: "85vh", overflowY: "auto", position: "relative" }}>
-        {/* Header */}
-        <div style={{ padding: "32px 32px 24px", borderBottom: "1px solid #1a1a1a", background: `linear-gradient(135deg, ${p.color}12 0%, transparent 60%)`, borderRadius: "16px 16px 0 0" }}>
-          <button onClick={onClose} style={{ position: "absolute", top: "16px", right: "16px", background: "#1a1a1a", border: "1px solid #333", color: "#888", width: "32px", height: "32px", borderRadius: "8px", cursor: "pointer", fontSize: "16px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ maxWidth: "640px", width: "100%", maxHeight: "85vh", borderRadius: "17px", padding: "3px", backgroundImage: RARITY_BORDER[rarity] }}>
+      <div style={{ background: "#111", border: "1px solid #222", borderRadius: "15px", width: "100%", maxHeight: "calc(85vh - 6px)", overflowY: "auto", position: "relative" }}>
+        {/* Header — reads as an oversized card face: name, mana pips, type line */}
+        <div style={{ padding: "32px 32px 20px", background: `linear-gradient(135deg, ${p.color}12 0%, #111 60%)`, borderRadius: "15px 15px 0 0" }}>
+          <button onClick={onClose} style={{ position: "absolute", top: "16px", right: "16px", background: "#1a1a1a", border: "1px solid #333", color: "#888", width: "32px", height: "32px", borderRadius: "8px", cursor: "pointer", fontSize: "16px", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1 }}>
             <X size={14} />
           </button>
           <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "8px" }}>
             <div style={{ width: "44px", height: "44px", borderRadius: "10px", background: `${p.color}15`, border: `1px solid ${p.color}30`, display: "flex", alignItems: "center", justifyContent: "center" }}>
               <IconComp size={22} color={p.color} />
             </div>
-            <div>
-              <h2 style={{ margin: 0, color: "#f0f0f0", fontSize: "22px", fontFamily: "'Commit Mono', 'IBM Plex Mono', monospace", fontWeight: 700 }}>{p.name}</h2>
-              <p style={{ margin: "2px 0 0", color: "#888", fontSize: "14px" }}>{p.tagline}</p>
+            <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "10px" }}>
+              <div>
+                <h2 style={{ margin: 0, color: "#f0f0f0", fontSize: "22px", fontFamily: "'Commit Mono', 'IBM Plex Mono', monospace", fontWeight: 700 }}>{p.name}</h2>
+                <p style={{ margin: "2px 0 0", color: "#888", fontSize: "14px" }}>{p.tagline}</p>
+              </div>
+              <div style={{ display: "flex", gap: "3px", flexShrink: 0, marginTop: "6px" }}>
+                {Array.from({ length: pipCount }).map((_, i) => (
+                  <span key={i} style={{ width: "8px", height: "8px", borderRadius: "50%", background: p.color, opacity: 0.9 }} />
+                ))}
+              </div>
             </div>
           </div>
-          <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "16px" }}>
+          <div style={{ display: "inline-block", padding: "3px 9px", background: "#1c1c1f", border: "1px solid #2a2a2a", borderRadius: "4px", marginBottom: "2px" }}>
+            <span style={{ color: "#999", fontSize: "10.5px", fontFamily: "'Commit Mono', monospace", letterSpacing: "0.02em" }}>
+              {getCardTypeLine(p)}
+            </span>
+          </div>
+          <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "14px" }}>
             {isWork ? (
               <span style={{ background: "#71717a22", color: "#a1a1aa", padding: "3px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: 600, letterSpacing: "0.05em", border: "1px solid #71717a44", display: "flex", alignItems: "center", gap: "4px" }}>
                 <Lock size={10} /> CONFIDENTIAL — CODENAMED
@@ -149,6 +165,7 @@ export function ProjectModal({ project: p, onClose }: { project: Project; onClos
             </div>
           )}
         </div>
+      </div>
       </div>
     </div>
   );

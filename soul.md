@@ -79,25 +79,63 @@ it solved, what stack, what outcome), **ask, don't invent them**. A
 plausible-sounding fabrication about someone's real professional work is
 worse than an honest placeholder.
 
-## The constellation (map view)
+## The card binder (default view)
 
-The homepage's default view is a star map (`src/components/constellation/`),
-not a grid — every project is a node, positioned automatically by a force
-simulation (`useForceLayout.ts`) clustered loosely by `category`. **You never
-place a node's (x, y) by hand.** Adding a project to `PERSONAL_PROJECTS` or
-`WORK_PROJECTS` is enough; it appears on the map on its own.
+The homepage's default view is a Magic: The Gathering-style trading card
+binder (`src/components/cards/`), not a grid or a graph — every project
+renders as its own card (name, mana pips, art box, type line, rules text,
+flavor text), grouped into sections by **card type**, with a cursor-tracked
+3D tilt + holographic shine on hover.
 
-If the new project has a real relationship to an existing one — it's a
-rewrite of it, a pivot away from it, or it shares live infrastructure with
-it — add one entry to `src/content/relationships.ts` (`{ from, to, kind,
-label? }`, `kind` one of `"pivot" | "rebuild" | "shared-infra"`). That's the
-only place relationships live; don't duplicate them on the project objects
-themselves. Skip it if there's no real connection — most projects have none,
-and that's fine.
+**Card type is derived, never stored.** `src/components/cards/cardType.ts`
+maps `project.category` → a card type via `getCardType()`:
+
+| `category`  | Card type    | Section label |
+|---|---|---|
+| `app`       | Creature     | Creatures |
+| `business`  | Land         | Lands |
+| `volunteer` | Enchantment  | Enchantments |
+| `work`      | Artifact     | Artifacts |
+
+Adding a project to `PERSONAL_PROJECTS` or `WORK_PROJECTS` is enough — it
+gets a card type, a binder section, and a rarity border for free. **You never
+pick a card type or hand-place a card by hand.** If a 5th category is ever
+added to `ProjectCategory`, add one row to `CATEGORY_TO_CARD_TYPE` in
+`cardType.ts` (and to `CATEGORY_META` in `page.tsx`, per "Adding a category"
+below) — that's the only place this mapping lives.
+
+Every other card field reuses existing data, nothing new to fill in:
+mana pips = `stack.length` (clamped 3-6), rules text = `description`,
+ability bullets = `highlights`, flavor text (italic) = `tagline`. Rarity
+border is derived from status via `getCardRarity()` — confidential work is
+always "mythic" (rarest/most guarded); a still-working live personal app is
+"holo" (the shiniest — least common state on this site); archived-with-a-url
+is "uncommon"; never-deployed is "common".
+
+**Art box falls back to icon-on-color automatically.** If
+`screenshots[0].src` exists (a `PersonalProject` with real captured
+screenshots), that's the card art. If not — a diagram-only project (work
+projects, Inkbound, DiaperShare) or a project with no screenshots yet — the
+art box renders the project's `icon` on a tinted `color` background instead,
+the same fallback treatment `ProjectCard` already uses. **Never fabricate
+card art** (no placeholder/stock images) to fill an empty art box; the icon
+fallback is the intended look, not a stopgap.
 
 The card grid still exists as the "list" view (a toggle next to the category
 filter) — unchanged, still driven by the same `ALL_PROJECTS`. Both views open
-the same `ProjectModal`.
+the same `ProjectModal`, whose header is restyled to read as an oversized
+version of the clicked card (rarity border, mana pips, type line) — the body
+sections below it are unaffected by any of this.
+
+### The constellation (retired, code kept)
+
+An earlier star-map view (`src/components/constellation/`, driven by
+`src/content/relationships.ts`) shipped before the card binder replaced it as
+the default. The components and relationship data are still in the repo —
+nothing was deleted — but nothing in `page.tsx` renders them anymore.
+Don't add new relationships or extend those components for the current
+site; if the map view is ever revived, treat that as its own decision, not
+something a new project needs to feed.
 
 A project can also carry a `diagram`-based walkthrough (not just work
 projects) — see the `BaseProject.diagram` / `demoSteps: DemoStep[]` shape in
@@ -122,13 +160,16 @@ the import + entry there first.
 
 ## Where things render
 
-- `src/app/page.tsx` — top-level layout, category filter, map/list toggle,
+- `src/app/page.tsx` — top-level layout, category filter, cards/list toggle,
   terminal easter egg. Reads from `ALL_PROJECTS` (`PERSONAL_PROJECTS` +
   `WORK_PROJECTS` concatenated).
-- `src/components/constellation/` — the map view: `ConstellationGraph`
-  (pan/zoom + rendering), `useForceLayout` (layout, pure/deterministic —
-  no `Math.random`), `ProjectStar`, `ConstellationEdge`, `StarField`
-  (decorative background only).
+- `src/components/cards/` — the default cards view: `CardBinder` (groups
+  `ALL_PROJECTS` by `getCardType`, renders sections), `TradingCard` (one
+  card face), `cardType.ts` (the derivation table + rarity/mana-pip logic,
+  pure functions), `useTiltEffect` (cursor tilt + holo shine hook, no new
+  deps — CSS custom properties written via a ref, not React state).
+- `src/components/constellation/` — retired map view, still in the repo but
+  unused in `page.tsx` (see "The constellation (retired, code kept)" above).
 - `src/components/ProjectCard.tsx` — the list-view tile.
 - `src/components/ProjectModal.tsx` — the detail view; branches on
   `project.kind` for a few sections (work projects show Problem/Outcome,

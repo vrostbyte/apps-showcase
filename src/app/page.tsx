@@ -1,16 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { GitBranch, Globe, LayoutGrid, Terminal as TermIcon, Waypoints } from "lucide-react";
+import { GitBranch, Globe, LayoutGrid, Terminal as TermIcon, Layers } from "lucide-react";
 import { PERSONAL_PROJECTS } from "@/content/personal-projects";
 import { WORK_PROJECTS } from "@/content/work-projects";
-import { RELATIONSHIPS } from "@/content/relationships";
 import type { CategoryMeta, Project, ProjectCategory } from "@/content/types";
 import { ICONS } from "@/components/icons";
 import { ProjectCard } from "@/components/ProjectCard";
 import { ProjectModal } from "@/components/ProjectModal";
 import { Terminal } from "@/components/Terminal";
-import { ConstellationGraph } from "@/components/constellation/ConstellationGraph";
+import { CardBinder } from "@/components/cards/CardBinder";
 
 const ALL_PROJECTS: Project[] = [...PERSONAL_PROJECTS, ...WORK_PROJECTS];
 
@@ -26,7 +25,7 @@ export default function AppShowcase() {
   const [termOpen, setTermOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [filter, setFilter] = useState<"all" | ProjectCategory>("all");
-  const [view, setView] = useState<"map" | "list">("map");
+  const [view, setView] = useState<"cards" | "list">("cards");
 
   const filtered = filter === "all" ? ALL_PROJECTS : ALL_PROJECTS.filter((p) => p.category === filter);
 
@@ -90,15 +89,15 @@ export default function AppShowcase() {
         </div>
 
         <div style={{ display: "flex", gap: "4px", background: "#111", borderRadius: "8px", padding: "4px", border: "1px solid #1a1a1a" }}>
-          <button onClick={() => setView("map")} aria-label="Map view" style={{
-            background: view === "map" ? "#1f1f1f" : "transparent",
-            border: "none", color: view === "map" ? "#4ade80" : "#555",
+          <button onClick={() => setView("cards")} aria-label="Card view" style={{
+            background: view === "cards" ? "#1f1f1f" : "transparent",
+            border: "none", color: view === "cards" ? "#4ade80" : "#555",
             padding: "6px 12px", borderRadius: "6px", cursor: "pointer",
-            fontSize: "12px", fontWeight: view === "map" ? 600 : 400,
+            fontSize: "12px", fontWeight: view === "cards" ? 600 : 400,
             fontFamily: "'Commit Mono', monospace",
             display: "flex", alignItems: "center", gap: "5px",
           }}>
-            <Waypoints size={12} /> map
+            <Layers size={12} /> cards
           </button>
           <button onClick={() => setView("list")} aria-label="List view" style={{
             background: view === "list" ? "#1f1f1f" : "transparent",
@@ -113,15 +112,9 @@ export default function AppShowcase() {
         </div>
       </div>
 
-      {view === "map" ? (
+      {view === "cards" ? (
         <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 24px 100px" }}>
-          <div style={{ height: "min(75vh, 760px)" }}>
-            <ConstellationGraph
-              projects={filtered}
-              relationships={RELATIONSHIPS}
-              onSelect={setSelectedProject}
-            />
-          </div>
+          <CardBinder projects={filtered} onSelect={setSelectedProject} />
         </div>
       ) : (
         <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 24px 100px" }}>
