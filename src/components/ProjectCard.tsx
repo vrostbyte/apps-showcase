@@ -32,20 +32,20 @@ export function ProjectCard({ project: p, onSelect }: { project: Project; onSele
           </div>
           <div style={{ display: "flex", gap: "6px" }}>
             {isWork ? (
-              <span style={{ background: "#71717a18", color: "#a1a1aa", padding: "2px 8px", borderRadius: "20px", fontSize: "10px", fontWeight: 600, fontFamily: "'Commit Mono', monospace", display: "flex", alignItems: "center", gap: "3px" }}>
+              <span style={{ background: "#71717a18", color: "#a1a1aa", padding: "2px 8px", borderRadius: "20px", fontSize: "10px", fontWeight: 600, fontFamily: "'Outfit', sans-serif", display: "flex", alignItems: "center", gap: "3px" }}>
                 <Lock size={8} /> CONFIDENTIAL
               </span>
             ) : (
-              <span style={{ background: p.live ? "#16a34a18" : "#71717a18", color: p.live ? "#4ade80" : "#a1a1aa", padding: "2px 8px", borderRadius: "20px", fontSize: "10px", fontWeight: 600, fontFamily: "'Commit Mono', monospace" }}>
+              <span style={{ background: p.live ? "#16a34a18" : "#71717a18", color: p.live ? "#4ade80" : "#a1a1aa", padding: "2px 8px", borderRadius: "20px", fontSize: "10px", fontWeight: 600, fontFamily: "'Outfit', sans-serif" }}>
                 {p.live ? "● LIVE" : p.url ? "○ ARCHIVED" : "○ NO DEPLOY"}
               </span>
             )}
             {p.category === "volunteer" && (
-              <span style={{ background: "#e879a012", color: "#f9a8c9", padding: "2px 8px", borderRadius: "20px", fontSize: "10px", fontWeight: 600, fontFamily: "'Commit Mono', monospace", display: "flex", alignItems: "center", gap: "3px" }}>
+              <span style={{ background: "#e879a012", color: "#f9a8c9", padding: "2px 8px", borderRadius: "20px", fontSize: "10px", fontWeight: 600, fontFamily: "'Outfit', sans-serif", display: "flex", alignItems: "center", gap: "3px" }}>
                 <Heart size={8} /> PRO BONO
               </span>
             )}
-            <span style={{ background: `${p.color}10`, color: p.color, padding: "2px 8px", borderRadius: "20px", fontSize: "10px", fontWeight: 600, fontFamily: "'Commit Mono', monospace", display: "flex", alignItems: "center", gap: "3px" }}>
+            <span style={{ background: `${p.color}10`, color: p.color, padding: "2px 8px", borderRadius: "20px", fontSize: "10px", fontWeight: 600, fontFamily: "'Outfit', sans-serif", display: "flex", alignItems: "center", gap: "3px" }}>
               <Play size={8} /> DEMO
             </span>
           </div>
@@ -55,7 +55,7 @@ export function ProjectCard({ project: p, onSelect }: { project: Project; onSele
 
         <div style={{ marginBottom: "16px" }}>
           {isWork ? (
-            <span style={{ color: "#555", fontSize: "11px", fontFamily: "'Commit Mono', monospace" }}>
+            <span style={{ color: "#555", fontSize: "11.5px", fontFamily: "'Outfit', sans-serif" }}>
               internal / not publicly linked
             </span>
           ) : p.url ? (
@@ -66,7 +66,7 @@ export function ProjectCard({ project: p, onSelect }: { project: Project; onSele
               onClick={(e) => e.stopPropagation()}
               style={{
                 display: "inline-flex", alignItems: "center", gap: "4px",
-                color: p.color, fontSize: "11px", fontFamily: "'Commit Mono', monospace",
+                color: p.color, fontSize: "11.5px", fontFamily: "'Commit Mono', monospace",
                 textDecoration: "none", opacity: 0.8,
               }}
             >
@@ -81,14 +81,14 @@ export function ProjectCard({ project: p, onSelect }: { project: Project; onSele
               onClick={(e) => e.stopPropagation()}
               style={{
                 display: "inline-flex", alignItems: "center", gap: "4px",
-                color: "#777", fontSize: "11px", fontFamily: "'Commit Mono', monospace",
+                color: "#777", fontSize: "11.5px", fontFamily: "'Outfit', sans-serif",
                 textDecoration: "none", opacity: 0.8,
               }}
             >
               <GitBranch size={10} /> source only
             </a>
           ) : (
-            <span style={{ color: "#444", fontSize: "11px", fontFamily: "'Commit Mono', monospace" }}>
+            <span style={{ color: "#444", fontSize: "11.5px", fontFamily: "'Outfit', sans-serif" }}>
               never publicly deployed
             </span>
           )}

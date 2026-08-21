@@ -147,9 +147,9 @@ export function TradingCard({ project: p, onSelect }: TradingCardProps) {
             <span style={{ display: "flex", alignItems: "center", gap: "2px", color: "#999", fontSize: "9px", fontFamily: "'Commit Mono', monospace" }} title={`Reach: ${reach} real capabilities`}>
               <Zap size={8} color={p.color} /> {reach}
             </span>
-            <span style={{ display: "flex", gap: "1.5px" }} title={`Uptime: ${uptime}/3`}>
-              {Array.from({ length: 3 }).map((_, i) => (
-                <span key={i} style={{ width: "4px", height: "4px", borderRadius: "50%", background: i < uptime ? p.color : "#333" }} />
+            <span style={{ display: "flex", alignItems: "flex-end", gap: "1.5px" }} title={`Status: ${uptime}/3`}>
+              {[3, 5.5, 8].map((h, i) => (
+                <span key={i} style={{ width: "2.5px", height: `${h}px`, borderRadius: "1px", background: i < uptime ? p.color : "#333" }} />
               ))}
             </span>
           </div>

@@ -1,9 +1,37 @@
 "use client";
 
+import { Zap } from "lucide-react";
 import type { Project } from "@/content/types";
 import { CATEGORY_IDENTITY, CATEGORY_ORDER } from "@/content/categories";
 import { ICONS } from "../icons";
 import { TradingCard } from "./TradingCard";
+
+/** A compact, always-visible key for the three numbers every card carries — no hover required to read a card. */
+function CardKey() {
+  const item = (swatch: React.ReactNode, label: string) => (
+    <span style={{ display: "flex", alignItems: "center", gap: "6px", color: "#777", fontSize: "12px" }}>
+      {swatch}
+      {label}
+    </span>
+  );
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: "18px", alignItems: "center", padding: "10px 16px", background: "#0d0d0f", border: "1px solid #1a1a1a", borderRadius: "8px", marginBottom: "28px" }}>
+      {item(
+        <span style={{ display: "flex", gap: "2px" }}>
+          {[0, 1, 2].map((i) => <span key={i} style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#888" }} />)}
+        </span>,
+        "build size — how much tech went into it"
+      )}
+      {item(<Zap size={12} color="#888" />, "reach — how many real things it does")}
+      {item(
+        <span style={{ display: "flex", alignItems: "flex-end", gap: "2px" }}>
+          {[4, 7, 10].map((h, i) => <span key={i} style={{ width: "3px", height: `${h}px`, borderRadius: "1px", background: "#888" }} />)}
+        </span>,
+        "status — live, archived, or never deployed"
+      )}
+    </div>
+  );
+}
 
 export function CardBinder({ projects, onSelect }: { projects: Project[]; onSelect: (project: Project) => void }) {
   const sections = CATEGORY_ORDER.map((category) => ({
@@ -14,14 +42,16 @@ export function CardBinder({ projects, onSelect }: { projects: Project[]; onSele
 
   if (sections.length === 0) {
     return (
-      <p style={{ color: "#555", fontSize: "13px", fontFamily: "'Commit Mono', monospace", padding: "40px 0", textAlign: "center" }}>
+      <p style={{ color: "#555", fontSize: "13.5px", fontFamily: "'Outfit', sans-serif", padding: "40px 0", textAlign: "center" }}>
         No cards match this filter.
       </p>
     );
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "44px" }}>
+    <div>
+      <CardKey />
+      <div style={{ display: "flex", flexDirection: "column", gap: "44px" }}>
       {sections.map(({ category, identity, projects: sectionProjects }) => {
         const Icon = ICONS[identity.icon];
         return (
@@ -50,6 +80,7 @@ export function CardBinder({ projects, onSelect }: { projects: Project[]; onSele
           </div>
         );
       })}
+      </div>
     </div>
   );
 }

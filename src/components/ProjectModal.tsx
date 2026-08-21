@@ -10,7 +10,7 @@ import { GEM_COLOR, getBuildCost, getReach, getRarityGem, getTypeLabel, getUptim
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: "24px" }}>
-      <h4 style={{ color: "#555", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.12em", margin: "0 0 10px", fontFamily: "'Commit Mono', monospace" }}>
+      <h4 style={{ color: "#666", fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em", margin: "0 0 10px", fontFamily: "'Outfit', sans-serif" }}>
         {title}
       </h4>
       {children}
@@ -63,9 +63,9 @@ export function ProjectModal({ project: p, onClose }: { project: Project; onClos
               <span style={{ display: "flex", alignItems: "center", gap: "3px", color: "#999", fontSize: "11px", fontFamily: "'Commit Mono', monospace" }} title={`Reach: ${reach} real capabilities`}>
                 <Zap size={10} color={p.color} /> {reach}
               </span>
-              <span style={{ display: "flex", gap: "2px" }} title={`Uptime: ${uptime}/3`}>
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <span key={i} style={{ width: "5px", height: "5px", borderRadius: "50%", background: i < uptime ? p.color : "#333" }} />
+              <span style={{ display: "flex", alignItems: "flex-end", gap: "2px" }} title={`Status: ${uptime}/3`}>
+                {[4, 7, 10].map((h, i) => (
+                  <span key={i} style={{ width: "3.5px", height: `${h}px`, borderRadius: "1px", background: i < uptime ? p.color : "#333" }} />
                 ))}
               </span>
             </div>
@@ -122,7 +122,7 @@ export function ProjectModal({ project: p, onClose }: { project: Project; onClos
           </Section>
 
           <Section title="Infrastructure">
-            <p style={{ color: "#aaa", fontSize: "13px", lineHeight: 1.6, margin: 0, fontFamily: "'Commit Mono', monospace" }}>{p.infra}</p>
+            <p style={{ color: "#aaa", fontSize: "14px", lineHeight: 1.6, margin: 0 }}>{p.infra}</p>
           </Section>
 
           {isWork && (
@@ -162,8 +162,8 @@ export function ProjectModal({ project: p, onClose }: { project: Project; onClos
                 <a href={p.url} target="_blank" rel="noopener noreferrer" style={{
                   display: "inline-flex", alignItems: "center", gap: "8px",
                   background: p.color, color: "#000", padding: "10px 20px",
-                  borderRadius: "8px", textDecoration: "none", fontSize: "13px",
-                  fontWeight: 600, fontFamily: "'Commit Mono', monospace",
+                  borderRadius: "8px", textDecoration: "none", fontSize: "13.5px",
+                  fontWeight: 600, fontFamily: "'Outfit', sans-serif",
                 }}>
                   {p.live ? "Visit Live Site" : "Visit Site (offline)"} <ArrowUpRight size={14} />
                 </a>
@@ -172,8 +172,8 @@ export function ProjectModal({ project: p, onClose }: { project: Project; onClos
                 <a href={p.repoUrl} target="_blank" rel="noopener noreferrer" style={{
                   display: "inline-flex", alignItems: "center", gap: "8px",
                   background: "transparent", color: "#ccc", padding: "10px 20px",
-                  borderRadius: "8px", textDecoration: "none", fontSize: "13px",
-                  fontWeight: 600, fontFamily: "'Commit Mono', monospace",
+                  borderRadius: "8px", textDecoration: "none", fontSize: "13.5px",
+                  fontWeight: 600, fontFamily: "'Outfit', sans-serif",
                   border: "1px solid #2a2a2a",
                 }}>
                   <GitBranch size={14} /> View Source
