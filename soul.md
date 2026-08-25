@@ -133,7 +133,7 @@ one real, derived meaning, documented here, never a decorative stat.
 **Art box falls back to icon-on-color automatically.** If
 `screenshots[0].src` exists (a `PersonalProject` with real captured
 screenshots), that's the card art. If not — a diagram-only project (work
-projects, Inkbound, DiaperShare) or a project with no screenshots yet — the
+projects, Inkbound) or a project with no screenshots yet — the
 art box renders the project's `icon` on a tinted `color` background instead,
 the same fallback treatment `ProjectCard` already uses. **Never fabricate
 card art** (no placeholder/stock images) to fill an empty art box; the icon
@@ -164,10 +164,16 @@ confidential work projects use, same convention: 4-8 nodes, 3-5 steps.
 
 **Never point an automated screenshot/browser capture at a project's real
 backend** if you don't know its data-exposure posture (open Firestore/DB
-rules, real user data, etc.) — diagram it instead. DiaperShare in
-`personal-projects.ts` is the example: it's got a real, live Firebase
-project committed to its repo with wide-open rules, so it's diagrammed on
-purpose, not screenshotted.
+rules, real user data, etc.) — diagram it instead, or ask the project owner
+to supply real screenshots by hand. This is a rule about *automated* capture,
+not about screenshots in general — a screenshot the owner captured and
+handed over themselves (knowing exactly what's on screen and whether it's
+safe to publish) is fine to use directly. DiaperShare in
+`personal-projects.ts` is the example of both halves of this rule: it has a
+real, live Firebase project with wide-open rules, so no automated tooling in
+this repo has ever been pointed at it — but it does have real screenshots,
+supplied directly by the owner, confirmed to be their own seed/demo data
+rather than a real user's.
 
 ## Icons
 
