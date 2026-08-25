@@ -7,8 +7,8 @@ import { useCalibration } from "./useCalibration";
 /**
  * The signature element: a draftsman's calibration rule the visitor drags
  * to recalibrate between the two real halves of the same person — this
- * "Builder" site and the enterprise AI & Agile Practice Coach profile at
- * joshjgriffith.com. Builder is the base layer (always full-size, showing
+ * "Builder" site and the enterprise Change Strategist / AI Enablement Lead
+ * profile at joshjgriffith.com. Builder is the base layer (always full-size, showing
  * through); Enterprise sits on top, clipped to only the region right of
  * the rule, so the drag reads as a physical wipe between two instrument
  * calibrations, not a photo crossfade. Default rest position gives Builder
@@ -55,7 +55,7 @@ export function DualityHero({ builtCount, categoryCount }: { builtCount: number;
 
   return (
     <section
-      aria-label="Two sides of the same person: builder and enterprise coach"
+      aria-label="Two sides of the same person: builder and enterprise change strategist"
       style={{ position: "relative", minHeight: "clamp(440px, 62vh, 580px)", overflow: "hidden", borderBottom: "1px solid #1c232c" }}
     >
       {/* Builder layer — base, always full-size */}
@@ -104,7 +104,7 @@ export function DualityHero({ builtCount, categoryCount }: { builtCount: number;
               <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: "var(--signal)" }} />
             </div>
             <h2 style={{ margin: "0 0 16px", color: "var(--enterprise-ink)", fontFamily: "var(--font-display)", fontWeight: 600, fontSize: "clamp(20px, 2.6vw, 30px)", lineHeight: 1.14, letterSpacing: "-0.01em" }}>
-              AI &amp; Agile Practice Coach at Vanguard.
+              AI Enablement &amp; Transformation Lead at Vanguard.
             </h2>
             <p style={{ margin: "0 0 18px", color: "#5c5348", fontSize: "clamp(12.5px, 1.3vw, 15px)", lineHeight: 1.6, fontFamily: "var(--font-body)" }}>
               $6.5M+ documented savings.

@@ -9,9 +9,9 @@ const MOTD = `  apps.joshjgriffith.dev
   Or just close this and use the visual view.`;
 
 const WHOAMI = `  Josh Griffith
-  AI & Agile Practice Coach // Phoenix, AZ
+  Change Strategist & AI Enablement Lead // Phoenix, AZ
   Builder, vibe coder, systems thinker.
-  12+ years: org dev, Lean Six Sigma, Agile, tech.
+  12+ years: change strategy, Lean Six Sigma, AI adoption.
   These apps were vibe-coded and shipped to Vercel.
   joshjgriffith.dev // github.com/vrostbyte`;
 

@@ -7,8 +7,8 @@ before touching `src/content/`. If you're a human: same advice applies.
 ## What this site is
 
 `joshjgriffith.dev`'s apps showcase — the "Builder" half of a deliberate
-duality with `joshjgriffith.com` (Josh's enterprise AI & Agile Practice
-Coach portfolio, a separate repo/site: `vrostbyte/myportfolio`). This site
+duality with `joshjgriffith.com` (Josh's enterprise Change Strategist &
+AI Enablement Lead portfolio, a separate repo/site: `vrostbyte/myportfolio`). This site
 is **not** a live-demo hub — most of the personal apps here depended on
 Supabase projects that have since been retired, and the work projects are
 confidential and were never public in the first place. Every project on
@@ -185,7 +185,7 @@ the import + entry there first.
 
 `src/components/duality/DualityHero.tsx` is the homepage's signature
 element: a draggable calibration rule that wipes between this "Builder"
-site and Josh's enterprise AI & Agile Practice Coach profile at
+site and Josh's enterprise Change Strategist / AI Enablement Lead profile at
 joshjgriffith.com (`vrostbyte/myportfolio` — a separate repo; this one
 never writes to it, only links out). Builder is a full-size base layer;
 Enterprise sits on top of it, clipped via `clip-path` to only the region
