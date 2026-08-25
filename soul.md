@@ -6,12 +6,15 @@ before touching `src/content/`. If you're a human: same advice applies.
 
 ## What this site is
 
-`joshjgriffith.dev`'s apps showcase. It is **not** a live-demo hub — most of
-the personal apps here depended on Supabase projects that have since been
-retired, and the work projects are confidential and were never public in
-the first place. Every project on this site is communicated through a
-**click-through walkthrough** instead of a working login or a real link.
-Nothing here should ever require a live backend to be legible to a visitor.
+`joshjgriffith.dev`'s apps showcase — the "Builder" half of a deliberate
+duality with `joshjgriffith.com` (Josh's enterprise AI & Agile Practice
+Coach portfolio, a separate repo/site: `vrostbyte/myportfolio`). This site
+is **not** a live-demo hub — most of the personal apps here depended on
+Supabase projects that have since been retired, and the work projects are
+confidential and were never public in the first place. Every project on
+this site is communicated through a **click-through walkthrough** instead
+of a working login or a real link. Nothing here should ever require a live
+backend to be legible to a visitor.
 
 Tone: direct, a little dry, no marketing fluff. Josh built these himself
 ("vibe-coded," self-taught) and the copy should read that way — specific
@@ -79,81 +82,77 @@ it solved, what stack, what outcome), **ask, don't invent them**. A
 plausible-sounding fabrication about someone's real professional work is
 worse than an honest placeholder.
 
-## The card binder (default view)
+## The visual system: a blueprint, not a game
 
-The homepage's default view is a trading-card binder (`src/components/cards/`),
-not a grid or a graph — every project renders as its own card (name, mana
-pips, art box, type line, rules text, flavor text, a Reach/Uptime stat
-plate), grouped into sections by the site's own **categories** — never by
-literal Magic: The Gathering type words like "Creature" or "Artifact". The
-MTG *system* (color-identity frames, mana pips, a rarity gem, stat boxes)
-is the inspiration; the section labels and card copy are always this site's
-own language.
+The homepage is built around one idea: Josh's day job *is* diagramming
+(process maps, Figma flows, RACI charts) and his hobby — this site — is
+also inherently diagrammable (architecture, data flow, UI). A technical
+blueprint/schematic system is the visual language native to both halves of
+that person, which is why it replaced an earlier Magic: The Gathering
+trading-card system (`src/components/cards/`, kept in the repo, unwired —
+see below). Six tokens, defined once in `src/app/globals.css`, are the
+whole palette:
 
-**Category identity is the single source of truth**, in
-`src/content/categories.ts` (`CATEGORY_IDENTITY`). It replaces the old
-per-file `CATEGORY_META` — the homepage filter bar, the binder's section
-dividers, and every card's frame color all read from this one place, so
-there's nothing to keep in sync by hand:
+| Token | Hex | Role |
+|---|---|---|
+| `--builder-ground` | `#0e141b` | Base dark ground — the site's home color |
+| `--builder-line` | `#6fe0f0` | Cyan drafting-line accent, live/status glow |
+| `--enterprise-ground` | `#f2ede3` | Enterprise-mode vellum (hero only) |
+| `--enterprise-ink` | `#262220` | Enterprise-mode text (hero only) |
+| `--signal` | `#c97a3d` | Shared amber accent — the one color both modes use |
+| `--structure` | `#8a97a6` | Hairlines, dimension-line accents, corner brackets |
 
-| `category`  | Label | Card frame | Section role |
-|---|---|---|---|
-| `app`       | Apps | ember (orange → near-black) | shipped, live, aggressive |
-| `business`  | My Business | verdant (green → near-black) | commerce, growth |
-| `volunteer` | Community Builds | rose (pink → near-black) | care, support |
-| `work`      | Work (Confidential) | violet (violet → near-black) | guarded, redacted |
+Type is IBM Plex throughout: `--font-display` (IBM Plex Sans Condensed) for
+names, headings, and section labels; `--font-body` (IBM Plex Sans) for
+prose; `--font-mono` (IBM Plex Mono) for tags, stats, and anything genuinely
+code-like (stack names, URLs). Registration-mark corner brackets
+(`src/components/Bracket.tsx`) stand in for rounded corners/drop shadows
+everywhere — the binder's old rounded-card look is gone.
+
+### The index (default view)
+
+`src/components/index/ProjectIndex.tsx` replaced the card binder *and* the
+old list view — there's one browsing view now, not a toggle. Every project
+renders as one dense row (name, category tag, stack chips, tagline, build
+size, Reach, and a status bar-meter), grouped into sections by
+`src/content/categories.ts` (`CATEGORY_IDENTITY` — unchanged from the card
+era: still the single source of truth for each category's label, icon,
+description, and `glow` accent color; its `frame` gradient, built for card
+borders, is unused now but left in place rather than deleted).
+
+**Every number is still derived, never stored** — `src/components/cards/
+cardType.ts`'s functions survive the card system's retirement because the
+*meaning* they encode is still correct, just rendered as a row instead of a
+card face:
+
+| Element | Meaning | Derivation |
+|---|---|---|
+| Build size (small dots) | How much tech went into it | `stack.length`, clamped 3-6 |
+| Reach (⚡ + number) | How many real things it does | `highlights.length` |
+| Status (bar meter) | How alive it is right now | 3 = live (or confidential, presumed active) / 2 = archived-with-a-url / 1 = never deployed |
 
 Adding a project to `PERSONAL_PROJECTS` or `WORK_PROJECTS` is enough — it
-gets a binder section, a card frame, and every stat below for free. **You
-never pick a color or hand-place a card.** If a 5th category is ever added
-to `ProjectCategory`, add one entry to `CATEGORY_IDENTITY` — that's the only
-place this mapping lives now (page.tsx's filter bar imports it directly).
+gets an index row and every stat above for free. Don't invent a new number
+without giving it the same treatment: one real, derived meaning, documented
+here.
 
-Individual `project.color` is a second, separate layer — it's the *accent*
-(icon tile tint, mana-pip fill, ability-bullet glyph) that keeps cards
-inside the same section visually distinct from each other. Don't conflate
-the two: category governs the frame, `color` governs the accent.
+`src/components/ProjectModal.tsx` is still the detail view opened from a
+row — restyled to the blueprint system (registration marks, `--structure`
+accents, the same stat readout) but structurally unchanged.
 
-**Every number on a card is derived, and each one has one specific,
-intentional meaning** — see `src/components/cards/cardType.ts`:
+### Retired, code kept (not deleted)
 
-| Card element | Meaning | Derivation |
-|---|---|---|
-| Mana pips (top right) | **Build cost** — how much tech went into it | `stack.length`, clamped 3-6 |
-| Left stat | **Reach** — how many real things it does | `highlights.length` |
-| Right stat | **Uptime** — how alive it is right now | 3 = live (or a confidential tool, presumed in active use) / 2 = archived-with-a-url / 1 = never deployed |
-| Rarity gem (in the type line) | How rare this state is on the site | work → mythic, live → rare, archived-url → uncommon, never-deployed → common — real MTG rarity-color convention: orange-red/gold/silver/black |
-| Rules text | The actual feature description | `description` |
-| Ability bullets | Real capabilities | `highlights` |
-| Flavor text (italic) | The one-line pitch | `tagline` |
+Two earlier browsing experiments are still in the repo but unwired from
+`page.tsx` — nothing was deleted, and neither should be extended for the
+current site:
+- `src/components/cards/` (`CardBinder`, `TradingCard`, `useTiltEffect`) —
+  the MTG trading-card system. Its derivation functions in `cardType.ts`
+  are the one exception: still actively used by `ProjectIndex`.
+- `src/components/constellation/` (driven by `src/content/relationships.ts`)
+  — the star-map view that preceded the card binder.
 
-Don't invent a new number for a card without giving it the same treatment:
-one real, derived meaning, documented here, never a decorative stat.
-
-**Art box falls back to icon-on-color automatically.** If
-`screenshots[0].src` exists (a `PersonalProject` with real captured
-screenshots), that's the card art. If not — a diagram-only project (work
-projects, Inkbound) or a project with no screenshots yet — the
-art box renders the project's `icon` on a tinted `color` background instead,
-the same fallback treatment `ProjectCard` already uses. **Never fabricate
-card art** (no placeholder/stock images) to fill an empty art box; the icon
-fallback is the intended look, not a stopgap.
-
-The card grid still exists as the "list" view (a toggle next to the category
-filter) — unchanged, still driven by the same `ALL_PROJECTS`. Both views open
-the same `ProjectModal`, whose header is restyled to read as an oversized
-version of the clicked card (category frame, mana pips, type line, rarity
-gem, stat plate) — the body sections below it are unaffected by any of this.
-
-### The constellation (retired, code kept)
-
-An earlier star-map view (`src/components/constellation/`, driven by
-`src/content/relationships.ts`) shipped before the card binder replaced it as
-the default. The components and relationship data are still in the repo —
-nothing was deleted — but nothing in `page.tsx` renders them anymore.
-Don't add new relationships or extend those components for the current
-site; if the map view is ever revived, treat that as its own decision, not
-something a new project needs to feed.
+If either is ever revived, treat that as its own decision, not something a
+new project needs to feed.
 
 A project can also carry a `diagram`-based walkthrough (not just work
 projects) — see the `BaseProject.diagram` / `demoSteps: DemoStep[]` shape in
@@ -182,24 +181,50 @@ Reference icons by string name (`icon: "bot"`) against the registry in
 `src/components/icons.ts`. If the icon you want isn't registered yet, add
 the import + entry there first.
 
+## The duality hero
+
+`src/components/duality/DualityHero.tsx` is the homepage's signature
+element: a draggable calibration rule that wipes between this "Builder"
+site and Josh's enterprise AI & Agile Practice Coach profile at
+joshjgriffith.com (`vrostbyte/myportfolio` — a separate repo; this one
+never writes to it, only links out). Builder is a full-size base layer;
+Enterprise sits on top of it, clipped via `clip-path` to only the region
+right of the rule (`src/components/duality/useCalibration.ts` owns the
+drag/keyboard/click-to-jump state, `t` from 0 = full Enterprise to 1 = full
+Builder). A `role="slider"` handle plus two "Builder"/"Enterprise" buttons
+give it a full keyboard and no-drag fallback; `prefers-reduced-motion` gets
+an instant snap instead of an eased transition.
+
+The Enterprise side is a **fixed, condensed teaser** — 2-3 real stats and
+one line, sourced once from `myportfolio/data/content.js`, not fetched live
+— pointing to joshjgriffith.com for the rest. Don't expand it into a second
+full theme for the whole page; the crossfade is deliberately scoped to the
+hero.
+
+Each side's text opacity is driven by its own *visible* pixel width
+(`FADE_OUT_PX`/`FADE_IN_PX` in `DualityHero.tsx`), not just the drag
+percentage — on a narrow viewport a fixed percentage can leave a panel too
+narrow to read but not narrow enough to hide, which clips text mid-word.
+Fading it out past a pixel threshold instead reads as an intentional limit.
+If you touch this component, re-check narrow viewports specifically; it's
+the one part of this system that has to reason about real pixel widths.
+
 ## Where things render
 
-- `src/app/page.tsx` — top-level layout, category filter, cards/list toggle,
-  terminal easter egg. Reads from `ALL_PROJECTS` (`PERSONAL_PROJECTS` +
-  `WORK_PROJECTS` concatenated).
+- `src/app/page.tsx` — top-level layout: nav, `DualityHero`, category
+  filter, `ProjectIndex`, footer, terminal easter egg. Reads from
+  `ALL_PROJECTS` (`PERSONAL_PROJECTS` + `WORK_PROJECTS` concatenated).
 - `src/content/categories.ts` — `CATEGORY_IDENTITY`, the single source of
-  truth for each category's label, icon, description, frame gradient, and
-  glow color. Read by `page.tsx` (filter bar) and `src/components/cards/`
-  (section dividers, card frames) — never duplicate this elsewhere.
-- `src/components/cards/` — the default cards view: `CardBinder` (groups
-  `ALL_PROJECTS` by `project.category`, renders binder-tab sections from
-  `categories.ts`), `TradingCard` (one card face), `cardType.ts` (the
-  build-cost/reach/uptime/rarity-gem derivation functions, pure), `useTiltEffect`
-  (cursor tilt + holo shine hook, no new deps — CSS custom properties written
-  via a ref, not React state).
-- `src/components/constellation/` — retired map view, still in the repo but
-  unused in `page.tsx` (see "The constellation (retired, code kept)" above).
-- `src/components/ProjectCard.tsx` — the list-view tile.
+  truth for each category's label, icon, description, and glow color. Read
+  by `page.tsx` (filter bar) and `ProjectIndex` (section dividers) — never
+  duplicate this elsewhere.
+- `src/components/index/ProjectIndex.tsx` — the default (only) browsing
+  view. Groups `ALL_PROJECTS` by category, renders one row per project.
+- `src/components/duality/` — the hero (see above).
+- `src/components/Bracket.tsx` — the shared registration-mark corner
+  component used by `ProjectIndex` section headers and `ProjectModal`.
+- `src/components/cards/` and `src/components/constellation/` — retired,
+  code kept (see "Retired, code kept" above).
 - `src/components/ProjectModal.tsx` — the detail view; branches on
   `project.kind` for a few sections (work projects show Problem/Outcome,
   personal projects show a live/archived link).
@@ -207,14 +232,16 @@ the import + entry there first.
   `ImageFrame` for screenshot steps or `ArchitectureDiagram` for diagram
   steps.
 - `src/components/Terminal.tsx` — the `ls` / `cat` / `open` / `whoami`
-  easter egg, driven by the same `ALL_PROJECTS` list.
+  easter egg, driven by the same `ALL_PROJECTS` list. Intentionally still
+  terminal-styled — it's an opt-in easter egg, not the site's default voice.
 
 ## Adding a category
 
 Categories live in `ProjectCategory` (`src/content/types.ts`) and
 `CATEGORY_IDENTITY` (`src/content/categories.ts`). Add to both if a project
 doesn't fit `app` / `business` / `volunteer` / `work` — give the new entry
-its own frame gradient and glow color, distinct from the existing four.
+its own `glow` color, distinct from the existing four (`frame` is a leftover
+from the retired card system and doesn't need a new value).
 
 ## Before you commit
 

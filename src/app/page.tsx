@@ -1,138 +1,72 @@
 "use client";
 
 import { useState } from "react";
-import { GitBranch, Globe, LayoutGrid, Terminal as TermIcon, Layers } from "lucide-react";
+import { GitBranch, Globe, Terminal as TermIcon, Compass } from "lucide-react";
 import { PERSONAL_PROJECTS } from "@/content/personal-projects";
 import { WORK_PROJECTS } from "@/content/work-projects";
 import { CATEGORY_IDENTITY, CATEGORY_ORDER } from "@/content/categories";
 import type { Project, ProjectCategory } from "@/content/types";
 import { ICONS } from "@/components/icons";
-import { ProjectCard } from "@/components/ProjectCard";
 import { ProjectModal } from "@/components/ProjectModal";
 import { Terminal } from "@/components/Terminal";
-import { CardBinder } from "@/components/cards/CardBinder";
+import { ProjectIndex } from "@/components/index/ProjectIndex";
+import { DualityHero } from "@/components/duality/DualityHero";
 
 const ALL_PROJECTS: Project[] = [...PERSONAL_PROJECTS, ...WORK_PROJECTS];
 
 const CATEGORY_META: Record<"all" | ProjectCategory, { label: string; icon: keyof typeof ICONS; glow?: string }> = {
-  all: { label: "All Projects", icon: "layers" },
+  all: { label: "All Builds", icon: "layers" },
   app: CATEGORY_IDENTITY.app,
   business: CATEGORY_IDENTITY.business,
   volunteer: CATEGORY_IDENTITY.volunteer,
   work: CATEGORY_IDENTITY.work,
 };
 
-/** A small fanned stack of blank cards, one per category color — states the site's whole metaphor in one glance. */
-function HeroCardStack() {
-  const cards = [
-    { color: CATEGORY_IDENTITY.work.glow, rotate: -11, x: 0, y: 18 },
-    { color: CATEGORY_IDENTITY.app.glow, rotate: 3, x: 34, y: 4 },
-    { color: CATEGORY_IDENTITY.volunteer.glow, rotate: 17, x: 68, y: 22 },
-  ];
-  return (
-    <div className="hidden lg:block" aria-hidden style={{ position: "relative", width: "190px", height: "190px", flexShrink: 0 }}>
-      {cards.map((card, i) => (
-        <div
-          key={i}
-          style={{
-            position: "absolute", left: `${card.x}px`, top: `${card.y}px`,
-            width: "110px", height: "154px", borderRadius: "11px",
-            background: "linear-gradient(160deg, #19191b, #0b0b0c)",
-            border: `1.5px solid ${card.color}66`,
-            boxShadow: `0 16px 32px -10px ${card.color}4d, 0 6px 16px rgba(0,0,0,0.55)`,
-            transform: `rotate(${card.rotate}deg)`,
-            zIndex: i,
-          }}
-        >
-          <div style={{ position: "absolute", inset: "9px", borderRadius: "7px", border: `1px solid ${card.color}30` }} />
-        </div>
-      ))}
-    </div>
-  );
-}
-
 export default function AppShowcase() {
   const [termOpen, setTermOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [filter, setFilter] = useState<"all" | ProjectCategory>("all");
-  const [view, setView] = useState<"cards" | "list">("cards");
 
   const filtered = filter === "all" ? ALL_PROJECTS : ALL_PROJECTS.filter((p) => p.category === filter);
   const spineGradient = `linear-gradient(90deg, ${CATEGORY_ORDER.map((c) => CATEGORY_IDENTITY[c].glow).join(", ")})`;
 
   return (
-    <div style={{ background: "#09090b", minHeight: "100vh", color: "#e0e0e0", fontFamily: "'Outfit', 'Helvetica Neue', sans-serif", position: "relative" }}>
-      {/* Ambient category-color glow, replacing the old flat terminal grid */}
-      <div aria-hidden style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0, overflow: "hidden" }}>
-        <div
-          style={{
-            position: "absolute", inset: "-10%",
-            background:
-              `radial-gradient(circle at 18% 8%, ${CATEGORY_IDENTITY.app.glow} 0%, transparent 24%), ` +
-              `radial-gradient(circle at 88% 4%, ${CATEGORY_IDENTITY.work.glow} 0%, transparent 22%), ` +
-              `radial-gradient(circle at 92% 78%, ${CATEGORY_IDENTITY.volunteer.glow} 0%, transparent 26%), ` +
-              `radial-gradient(circle at 8% 88%, ${CATEGORY_IDENTITY.business.glow} 0%, transparent 26%)`,
-            opacity: 0.4,
-            filter: "blur(70px)",
-            mixBlendMode: "screen",
-          }}
-        />
-        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 50% 0%, transparent 0%, #09090b 75%)" }} />
-      </div>
-
-      <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(9,9,11,0.8)", backdropFilter: "blur(12px)", borderBottom: "1px solid #1a1a1a", padding: "0 24px" }}>
+    <div style={{ background: "var(--builder-ground)", minHeight: "100vh", color: "#e0e0e0", fontFamily: "var(--font-body)", position: "relative" }}>
+      <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(14,20,27,0.85)", backdropFilter: "blur(12px)", borderBottom: "1px solid #1c232c", padding: "0 24px" }}>
         <div style={{ maxWidth: "1100px", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", height: "56px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <div style={{ width: "26px", height: "26px", borderRadius: "7px", background: "#4ade8018", border: "1px solid #4ade8040", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Layers size={13} color="#4ade80" />
+            <div style={{ width: "26px", height: "26px", borderRadius: "5px", background: "#6fe0f018", border: "1px solid #6fe0f040", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Compass size={13} color="var(--builder-line)" />
             </div>
-            <span style={{ color: "#e8e8e8", fontFamily: "var(--font-space-grotesk), 'Outfit', sans-serif", fontWeight: 700, fontSize: "15px" }}>Josh Griffith</span>
+            <span style={{ color: "#f0ede6", fontFamily: "var(--font-display)", fontWeight: 600, fontSize: "15px" }}>Josh Griffith</span>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "18px" }}>
-            <a href="https://joshjgriffith.dev" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-neutral-200" style={{ color: "#555", display: "flex", alignItems: "center", gap: "4px", fontSize: "13px", textDecoration: "none" }}>
-              <Globe size={13} /> portfolio
+            <a href="https://joshjgriffith.com" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-neutral-200" style={{ color: "#5a6472", display: "flex", alignItems: "center", gap: "4px", fontSize: "13px", textDecoration: "none" }}>
+              <Globe size={13} /> joshjgriffith.com
             </a>
-            <a href="https://github.com/vrostbyte" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-neutral-200" style={{ color: "#555", display: "flex", alignItems: "center", gap: "4px", fontSize: "13px", textDecoration: "none" }}>
+            <a href="https://github.com/vrostbyte" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-neutral-200" style={{ color: "#5a6472", display: "flex", alignItems: "center", gap: "4px", fontSize: "13px", textDecoration: "none" }}>
               <GitBranch size={13} /> github
             </a>
-            <button onClick={() => setTermOpen(true)} aria-label="Open terminal easter egg" title="Psst — try the terminal" className="transition-colors hover:border-[#4ade80] hover:text-[#4ade80]" style={{ background: "transparent", border: "1px solid #2a2a2a", color: "#555", width: "30px", height: "30px", borderRadius: "7px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <button onClick={() => setTermOpen(true)} aria-label="Open terminal easter egg" title="Psst — try the terminal" className="transition-colors hover:border-[var(--signal)] hover:text-[var(--signal)]" style={{ background: "transparent", border: "1px solid #232b35", color: "#5a6472", width: "30px", height: "30px", borderRadius: "5px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <TermIcon size={13} />
             </button>
           </div>
         </div>
       </nav>
 
-      <header style={{ position: "relative", maxWidth: "1100px", margin: "0 auto", padding: "80px 24px 60px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "40px" }}>
-        <div style={{ maxWidth: "560px" }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: "7px", padding: "4px 12px", background: "#111", border: "1px solid #1f1f1f", borderRadius: "20px", marginBottom: "20px" }}>
-            <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#4ade80" }} />
-            <span style={{ color: "#999", fontSize: "12px", fontWeight: 500 }}>
-              {ALL_PROJECTS.length} cards across {CATEGORY_ORDER.length} categories
-            </span>
-          </div>
-          <h1 style={{ fontSize: "clamp(32px, 5vw, 50px)", fontWeight: 700, lineHeight: 1.12, margin: "0 0 20px", color: "#f5f5f5", letterSpacing: "-0.02em", fontFamily: "var(--font-space-grotesk), 'Outfit', sans-serif" }}>
-            {"Apps I've built,"}<br />
-            <span style={{ color: "#4ade80" }}>shipped</span> {"& maintain."}
-          </h1>
-          <p style={{ color: "#777", fontSize: "16px", lineHeight: 1.7, margin: 0 }}>
-            Real apps solving real problems, self-taught and self-shipped, plus internal tools I&apos;ve built at work
-            described in the abstract. Every project here is its own card — flip through the binder below.
-          </p>
-        </div>
-        <HeroCardStack />
-      </header>
+      <DualityHero builtCount={ALL_PROJECTS.length} categoryCount={CATEGORY_ORDER.length} />
 
-      <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 24px 24px", display: "flex", flexWrap: "wrap", gap: "12px", justifyContent: "space-between", alignItems: "center", position: "relative" }}>
-        <div style={{ display: "flex", gap: "4px", background: "#111", borderRadius: "8px", padding: "4px", width: "fit-content", flexWrap: "wrap", border: "1px solid #1a1a1a" }}>
+      <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "28px 24px 24px", position: "relative" }}>
+        <div style={{ display: "flex", gap: "4px", background: "var(--builder-ground-raised)", borderRadius: "6px", padding: "4px", width: "fit-content", flexWrap: "wrap", border: "1px solid #1c232c" }}>
           {(Object.entries(CATEGORY_META) as [keyof typeof CATEGORY_META, typeof CATEGORY_META[keyof typeof CATEGORY_META]][]).map(([key, { label, icon, glow }]) => {
             const CatIcon = ICONS[icon];
             return (
               <button key={key} onClick={() => setFilter(key)} style={{
-                background: filter === key ? "#1f1f1f" : "transparent",
-                border: "none", color: filter === key ? "#f0f0f0" : "#555",
-                padding: "6px 14px", borderRadius: "6px", cursor: "pointer",
+                background: filter === key ? "#1c232c" : "transparent",
+                border: "none", color: filter === key ? "#f0ede6" : "#5a6472",
+                padding: "6px 14px", borderRadius: "4px", cursor: "pointer",
                 fontSize: "12.5px", fontWeight: filter === key ? 600 : 500,
-                fontFamily: "'Outfit', sans-serif",
+                fontFamily: "var(--font-body)",
                 display: "flex", alignItems: "center", gap: "6px",
                 transition: "all 0.15s",
               }}>
@@ -142,47 +76,14 @@ export default function AppShowcase() {
             );
           })}
         </div>
-
-        <div style={{ display: "flex", gap: "4px", background: "#111", borderRadius: "8px", padding: "4px", border: "1px solid #1a1a1a" }}>
-          <button onClick={() => setView("cards")} aria-label="Card view" style={{
-            background: view === "cards" ? "#1f1f1f" : "transparent",
-            border: "none", color: view === "cards" ? "#4ade80" : "#555",
-            padding: "6px 12px", borderRadius: "6px", cursor: "pointer",
-            fontSize: "12.5px", fontWeight: view === "cards" ? 600 : 500,
-            fontFamily: "'Outfit', sans-serif",
-            display: "flex", alignItems: "center", gap: "5px",
-          }}>
-            <Layers size={12} /> cards
-          </button>
-          <button onClick={() => setView("list")} aria-label="List view" style={{
-            background: view === "list" ? "#1f1f1f" : "transparent",
-            border: "none", color: view === "list" ? "#4ade80" : "#555",
-            padding: "6px 12px", borderRadius: "6px", cursor: "pointer",
-            fontSize: "12.5px", fontWeight: view === "list" ? 600 : 500,
-            fontFamily: "'Outfit', sans-serif",
-            display: "flex", alignItems: "center", gap: "5px",
-          }}>
-            <LayoutGrid size={12} /> list
-          </button>
-        </div>
       </div>
 
-      {view === "cards" ? (
-        <div style={{ position: "relative", maxWidth: "1100px", margin: "0 auto", padding: "0 24px 100px" }}>
-          <CardBinder projects={filtered} onSelect={setSelectedProject} />
-        </div>
-      ) : (
-        <div style={{ position: "relative", maxWidth: "1100px", margin: "0 auto", padding: "0 24px 100px" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "16px" }}>
-            {filtered.map((p) => (
-              <ProjectCard key={p.slug} project={p} onSelect={() => setSelectedProject(p)} />
-            ))}
-          </div>
-        </div>
-      )}
+      <div style={{ position: "relative", maxWidth: "1100px", margin: "0 auto", padding: "0 24px 100px" }}>
+        <ProjectIndex projects={filtered} onSelect={setSelectedProject} />
+      </div>
 
       <div style={{ position: "relative", height: "3px", background: spineGradient, opacity: 0.7 }} />
-      <footer style={{ position: "relative", padding: "24px", textAlign: "center", color: "#3a3a3a", fontSize: "12.5px", fontFamily: "'Outfit', sans-serif" }}>
+      <footer style={{ position: "relative", padding: "24px", textAlign: "center", color: "#3a4149", fontSize: "12.5px", fontFamily: "var(--font-body)" }}>
         Vibe-coded with care by Josh Griffith · © {new Date().getFullYear()}
       </footer>
 

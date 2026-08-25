@@ -90,7 +90,7 @@ export function ArchitectureDiagram({ nodes, edges, activeNodeIds, activeEdgeInd
                 {node.label}
               </div>
               {node.sublabel && (
-                <div style={{ color: active ? "#888" : "#444", fontSize: "9px", fontFamily: "'Commit Mono', monospace", marginTop: "1px" }}>
+                <div style={{ color: active ? "#888" : "#444", fontSize: "9px", fontFamily: "var(--font-mono)", marginTop: "1px" }}>
                   {node.sublabel}
                 </div>
               )}

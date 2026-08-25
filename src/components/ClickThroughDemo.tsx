@@ -32,7 +32,7 @@ export function ClickThroughDemo({ steps, color, diagram }: ClickThroughDemoProp
       <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
         <Play size={14} color={color} />
         <span style={{ color: "#ddd", fontSize: "13px", fontWeight: 600 }}>Walkthrough</span>
-        <span style={{ color: "#555", fontSize: "11px", fontFamily: "'Commit Mono', monospace", marginLeft: "auto" }}>
+        <span style={{ color: "#555", fontSize: "11px", fontFamily: "var(--font-mono)", marginLeft: "auto" }}>
           {i + 1} / {steps.length}
         </span>
       </div>
