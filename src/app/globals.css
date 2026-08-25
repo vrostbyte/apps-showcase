@@ -1,1 +1,30 @@
 @import "tailwindcss";
+
+/*
+ * Design tokens for the site's blueprint/schematic system — see soul.md.
+ * Builder and Enterprise are the two halves of the duality hero; the rest
+ * of the site lives permanently in the Builder palette. --signal is the
+ * one color deliberately shared by both modes.
+ */
+:root {
+  --builder-ground: #0e141b;
+  --builder-ground-raised: #131b24;
+  --builder-line: #6fe0f0;
+  --enterprise-ground: #f2ede3;
+  --enterprise-ink: #262220;
+  --signal: #c97a3d;
+  --structure: #8a97a6;
+
+  --font-display: var(--font-ibm-plex-sans-condensed), "Arial Narrow", sans-serif;
+  --font-body: var(--font-ibm-plex-sans), "Helvetica Neue", sans-serif;
+  --font-mono: var(--font-ibm-plex-mono), "SFMono-Regular", monospace;
+}
+
+html {
+  background: var(--builder-ground);
+}
+
+::selection {
+  background: var(--signal);
+  color: var(--builder-ground);
+}

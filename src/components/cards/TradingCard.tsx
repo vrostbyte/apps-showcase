@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Zap } from "lucide-react";
 import type { Project } from "@/content/types";
+import { CATEGORY_IDENTITY } from "@/content/categories";
 import { ICONS } from "../icons";
 import {
-  getCardRarity, getCardType, getCardTypeLine, getManaPipCount,
-  RARITY_BORDER, RARITY_LABEL,
+  GEM_COLOR, getBuildCost, getReach, getRarityGem, getTypeLabel, getUptimeTier,
 } from "./cardType";
 import { useTiltEffect } from "./useTiltEffect";
 
@@ -14,13 +15,16 @@ interface TradingCardProps {
   onSelect: () => void;
 }
 
+const DISPLAY_FONT = "var(--font-space-grotesk), 'Outfit', sans-serif";
+
 export function TradingCard({ project: p, onSelect }: TradingCardProps) {
   const tiltRef = useTiltEffect<HTMLDivElement>();
-  const cardMeta = getCardType(p);
-  const rarity = getCardRarity(p);
+  const identity = CATEGORY_IDENTITY[p.category];
+  const rarity = getRarityGem(p);
   const Icon = ICONS[p.icon];
-  const pipCount = getManaPipCount(p);
-  const isCreature = cardMeta.type === "Creature";
+  const buildCost = getBuildCost(p);
+  const reach = getReach(p);
+  const uptime = getUptimeTier(p);
   const collectorNumber = p.slug;
   const [artErrored, setArtErrored] = useState(false);
   const artImgRef = useRef<HTMLImageElement>(null);
@@ -45,7 +49,7 @@ export function TradingCard({ project: p, onSelect }: TradingCardProps) {
         aspectRatio: "5 / 7",
         borderRadius: "14px",
         padding: "3px",
-        background: RARITY_BORDER[rarity],
+        background: `linear-gradient(150deg, ${identity.frame[0]}, ${identity.frame[1]} 55%, ${identity.frame[2]})`,
         cursor: "pointer",
         transform: "perspective(900px) rotateX(var(--tilt-rx, 0deg)) rotateY(var(--tilt-ry, 0deg)) scale(var(--tilt-scale, 1))",
         transition: "transform 0.15s ease-out",
@@ -74,7 +78,7 @@ export function TradingCard({ project: p, onSelect }: TradingCardProps) {
           position: "relative",
           height: "100%",
           borderRadius: "11px",
-          background: "#141416",
+          background: `linear-gradient(180deg, ${identity.frame[2]} 0%, #101012 40%)`,
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
@@ -82,11 +86,11 @@ export function TradingCard({ project: p, onSelect }: TradingCardProps) {
       >
         {/* Header: name + mana pips */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 10px 6px", gap: "6px" }}>
-          <span style={{ color: "#f0f0f0", fontSize: "13px", fontWeight: 700, fontFamily: "'Commit Mono', monospace", lineHeight: 1.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+          <span style={{ color: "#f5f5f5", fontSize: "13px", fontWeight: 700, fontFamily: DISPLAY_FONT, lineHeight: 1.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
             {p.name}
           </span>
-          <div style={{ display: "flex", gap: "2px", flexShrink: 0 }}>
-            {Array.from({ length: pipCount }).map((_, i) => (
+          <div style={{ display: "flex", gap: "2px", flexShrink: 0 }} title={`Build cost: ${buildCost}`}>
+            {Array.from({ length: buildCost }).map((_, i) => (
               <span key={i} style={{ width: "7px", height: "7px", borderRadius: "50%", background: p.color, opacity: 0.9 }} />
             ))}
           </div>
@@ -110,11 +114,12 @@ export function TradingCard({ project: p, onSelect }: TradingCardProps) {
           )}
         </div>
 
-        {/* Type line */}
-        <div style={{ margin: "6px 8px 0", padding: "3px 8px", background: "#1c1c1f", border: "1px solid #2a2a2a", borderRadius: "4px", flexShrink: 0 }}>
+        {/* Type line: category + rarity gem */}
+        <div style={{ margin: "6px 8px 0", padding: "3px 8px", display: "flex", alignItems: "center", justifyContent: "space-between", background: "#1c1c1f", border: "1px solid #2a2a2a", borderRadius: "4px", flexShrink: 0 }}>
           <span style={{ color: "#999", fontSize: "9.5px", fontFamily: "'Commit Mono', monospace", letterSpacing: "0.02em" }}>
-            {getCardTypeLine(p)}
+            {getTypeLabel(p)}
           </span>
+          <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: GEM_COLOR[rarity], flexShrink: 0 }} title={rarity} />
         </div>
 
         {/* Text box */}
@@ -130,25 +135,24 @@ export function TradingCard({ project: p, onSelect }: TradingCardProps) {
               </div>
             ))}
           </div>
-          <p style={{ margin: "auto 0 0", color: "#555", fontSize: "9px", fontStyle: "italic", lineHeight: 1.4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+          <p style={{ margin: "auto 0 0", padding: "5px 0 0", borderTop: "1px solid #1e1e1e", color: "#666", fontSize: "9px", fontStyle: "italic", lineHeight: 1.4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
             {p.tagline}
           </p>
         </div>
 
-        {/* Footer: collector number + rarity/status, P/T box for Creatures only (real MTG cards only put P/T on creatures) */}
+        {/* Footer: collector number + Reach/Uptime stat plate */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 10px 8px", flexShrink: 0 }}>
           <span style={{ color: "#444", fontSize: "8px", fontFamily: "'Commit Mono', monospace" }}>{collectorNumber}</span>
-          {isCreature && p.kind === "personal" ? (
-            <span style={{
-              background: "#1c1c1f", border: `1px solid ${p.color}50`, borderRadius: "4px",
-              padding: "2px 7px", color: p.color, fontSize: "9px", fontWeight: 700,
-              fontFamily: "'Commit Mono', monospace",
-            }}>
-              {p.live ? "● / ●" : "○ / ○"}
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <span style={{ display: "flex", alignItems: "center", gap: "2px", color: "#999", fontSize: "9px", fontFamily: "'Commit Mono', monospace" }} title={`Reach: ${reach} real capabilities`}>
+              <Zap size={8} color={p.color} /> {reach}
             </span>
-          ) : (
-            <span style={{ color: "#666", fontSize: "8px", fontFamily: "'Commit Mono', monospace" }}>{RARITY_LABEL[rarity]}</span>
-          )}
+            <span style={{ display: "flex", alignItems: "flex-end", gap: "1.5px" }} title={`Status: ${uptime}/3`}>
+              {[3, 5.5, 8].map((h, i) => (
+                <span key={i} style={{ width: "2.5px", height: `${h}px`, borderRadius: "1px", background: i < uptime ? p.color : "#333" }} />
+              ))}
+            </span>
+          </div>
         </div>
       </div>
     </div>

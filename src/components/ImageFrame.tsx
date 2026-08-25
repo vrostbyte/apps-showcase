@@ -29,7 +29,7 @@ export function ImageFrame({ src, alt }: { src: string; alt: string }) {
           }}
         >
           <Eye size={24} />
-          <span style={{ fontFamily: "'Commit Mono', monospace", fontSize: "12px" }}>
+          <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: "12.5px" }}>
             screenshot coming soon
           </span>
         </div>
