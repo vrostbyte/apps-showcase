@@ -49,7 +49,7 @@ export const GEM_COLOR: Record<RarityGem, string> = {
 };
 
 export const GEM_LABEL: Record<RarityGem, string> = {
-  mythic: "Confidential",
+  mythic: "Enterprise",
   rare: "Live",
   uncommon: "Archived",
   common: "Never deployed",

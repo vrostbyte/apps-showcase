@@ -1,7 +1,7 @@
 "use client";
 
 import { Zap } from "lucide-react";
-import type { Project } from "@/content/types";
+import type { Project, ProjectCategory } from "@/content/types";
 import { CATEGORY_IDENTITY, CATEGORY_ORDER, type CategoryIdentity } from "@/content/categories";
 import { ICONS } from "../icons";
 import { getBuildCost, getReach, getUptimeTier } from "../cards/cardType";
@@ -92,8 +92,10 @@ function IndexRow({ project: p, onSelect }: { project: Project; onSelect: () => 
   );
 }
 
-export function ProjectIndex({ projects, onSelect }: { projects: Project[]; onSelect: (project: Project) => void }) {
-  const sections = CATEGORY_ORDER.map((category) => ({
+export function ProjectIndex({
+  projects, onSelect, categoryOrder = CATEGORY_ORDER,
+}: { projects: Project[]; onSelect: (project: Project) => void; categoryOrder?: ProjectCategory[] }) {
+  const sections = categoryOrder.map((category) => ({
     category,
     identity: CATEGORY_IDENTITY[category],
     projects: projects.filter((p) => p.category === category),

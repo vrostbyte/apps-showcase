@@ -11,7 +11,7 @@ duality with `joshjgriffith.com` (Josh's enterprise Change Strategist &
 AI Enablement Lead portfolio, a separate repo/site: `vrostbyte/myportfolio`). This site
 is **not** a live-demo hub — most of the personal apps here depended on
 Supabase projects that have since been retired, and the work projects are
-confidential and were never public in the first place. Every project on
+genericized internal tools that were never public in the first place. Every project on
 this site is communicated through a **click-through walkthrough** instead
 of a working login or a real link. Nothing here should ever require a live
 backend to be legible to a visitor.
@@ -53,20 +53,27 @@ app (not just "here's a screen") — each step's `caption` should explain
 
 ### 2. `WorkProject` — `src/content/work-projects.ts`
 
-Confidential internal tools built on the job. These are **never** given a
-real name, a real screenshot, a real company/system name, or a real link.
-Instead:
+Real internal tools built on the job, rendered on the site as "Enterprise
+Projects." These are **never** given a real company/system name, a real
+screenshot, or a real link — they're described in the abstract. This
+genericization rule is an internal convention for whoever (human or agent)
+adds the next entry here; it is never rendered on the page itself, and the
+word "confidential" doesn't appear anywhere in the UI. Instead:
 
-- **Codename**: give it a Magic: The Gathering card name (`codename` field,
-  also used as `name`). Pick one that loosely fits the project's vibe if you
-  can (a fraud-detection tool might be `Counterspell`; an automation tool
-  might be `Time Warp`) — it doesn't need to be clever, just a real MTG
-  card name so it reads as an intentional convention, not a placeholder.
+- **Codename**: if the real project already has a codename people actually
+  use (e.g. `Project Rhytic Study` in `work-projects.ts` — not an MTG name,
+  and that's fine, it's a real pre-existing name, not one that needed
+  inventing), use that as-is for both `codename` and `name`. Only invent a
+  stand-in name if you have to: in that case, use a real Magic: The Gathering
+  card name (pick one that loosely fits the project's vibe if you can — a
+  fraud-detection tool might be `Counterspell`, an automation tool might be
+  `Time Warp`) so it reads as an intentional convention, not a placeholder.
 - **Content**: `problem`, `description`, and `outcome` are all genericized —
   describe the shape of the problem and solution, not identifying details.
-  No client names, no internal tool names, no real numbers that could
-  identify the org. Rough/rounded impact ("cut a process from hours to
-  minutes") is fine; exact metrics from a real system are not.
+  No employer name, no internal team/system names, no real numbers that
+  could identify the org or a specific client. Rough/rounded impact ("cut a
+  process from hours to minutes") is fine; exact metrics from a real system
+  are not.
 - **Demo**: instead of screenshots, work projects get an architecture
   diagram (`diagram.nodes` / `diagram.edges`) and a `DiagramStep[]`
   walkthrough that lights up different nodes/edges at each step
@@ -74,13 +81,11 @@ Instead:
   Keep it to 4-8 nodes laid out left-to-right by data flow, and 3-5 steps
   that walk through the request lifecycle.
 
-**`black-lotus` in `work-projects.ts` is a template, not a real project.**
-It exists to show the schema shape. When adding a real work project, base
-the structure on it but replace every `TEMPLATE:` field with real
-(genericized) content — and if you don't have the real facts (what problem
-it solved, what stack, what outcome), **ask, don't invent them**. A
+When adding a real entry: base the structure on one of the existing entries
+in `work-projects.ts`, and if you don't have the real facts (what problem it
+solved, what stack, what outcome), **ask, don't invent them**. A
 plausible-sounding fabrication about someone's real professional work is
-worse than an honest placeholder.
+worse than asking.
 
 ## The visual system: a blueprint, not a game
 
@@ -129,7 +134,7 @@ card face:
 |---|---|---|
 | Build size (small dots) | How much tech went into it | `stack.length`, clamped 3-6 |
 | Reach (⚡ + number) | How many real things it does | `highlights.length` |
-| Status (bar meter) | How alive it is right now | 3 = live (or confidential, presumed active) / 2 = archived-with-a-url / 1 = never deployed |
+| Status (bar meter) | How alive it is right now | 3 = live (or enterprise work, presumed active) / 2 = archived-with-a-url / 1 = never deployed |
 
 Adding a project to `PERSONAL_PROJECTS` or `WORK_PROJECTS` is enough — it
 gets an index row and every stat above for free. Don't invent a new number
@@ -159,7 +164,7 @@ projects) — see the `BaseProject.diagram` / `demoSteps: DemoStep[]` shape in
 `src/content/types.ts`. Use it for a personal project with no real UI to
 screenshot (a bot, a CLI, anything that never got a public deploy and has
 nothing visual to capture) — same `ArchitectureDiagram` component the
-confidential work projects use, same convention: 4-8 nodes, 3-5 steps.
+work projects use, same convention: 4-8 nodes, 3-5 steps.
 
 **Never point an automated screenshot/browser capture at a project's real
 backend** if you don't know its data-exposure posture (open Firestore/DB

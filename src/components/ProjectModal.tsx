@@ -96,7 +96,7 @@ export function ProjectModal({ project: p, onClose }: { project: Project; onClos
           </div>
           <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "14px" }}>
             {isWork ? (
-              <Tag tone="#8a97a6"><Lock size={9} /> CONFIDENTIAL — CODENAMED</Tag>
+              <Tag tone="#8a97a6"><Lock size={9} /> ENTERPRISE</Tag>
             ) : (
               <Tag tone={p.live ? "#4ade80" : "#8a97a6"}>
                 {p.live ? "● LIVE" : p.url ? "○ ARCHIVED" : "○ NEVER DEPLOYED"}
@@ -123,7 +123,7 @@ export function ProjectModal({ project: p, onClose }: { project: Project; onClos
           )}
           {isWork && (
             <div style={{ background: "var(--builder-ground)", border: "1px solid #1c232c", borderRadius: "4px", padding: "12px 14px", marginBottom: "20px", color: "#8993a1", fontSize: "12.5px", lineHeight: 1.5, fontFamily: "var(--font-body)" }}>
-              This is real internal work, described in the abstract and named &ldquo;{p.codename}&rdquo; to keep it confidential. The diagram below shows the shape of the system, not the actual implementation.
+              This is real enterprise work, described in the abstract and named &ldquo;{p.codename}&rdquo; to protect identifying details. The diagram below shows the shape of the system, not the actual implementation.
             </div>
           )}
 

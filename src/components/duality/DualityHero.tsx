@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ArrowUpRight, MoveHorizontal } from "lucide-react";
-import { useCalibration } from "./useCalibration";
+import type { useCalibration } from "./useCalibration";
 
 /**
  * The signature element: a draftsman's calibration rule the visitor drags
@@ -13,13 +13,21 @@ import { useCalibration } from "./useCalibration";
  * the rule, so the drag reads as a physical wipe between two instrument
  * calibrations, not a photo crossfade. Default rest position gives Builder
  * the majority (this is its home turf) with Enterprise legibly peeking in.
+ *
+ * Controlled component: `page.tsx` owns `useCalibration()` (and derives the
+ * `mode` that actually filters what renders below the hero) and passes its
+ * return value straight through as props — this component only owns the
+ * visuals.
  */
 /** Below this many visible pixels, a panel's text is fully faded — clipping it mid-word instead is worse than hiding it. */
 const FADE_OUT_PX = 165;
 const FADE_IN_PX = 300;
 
-export function DualityHero({ builtCount, categoryCount }: { builtCount: number; categoryCount: number }) {
-  const { t, setT, dragging, setDragging, trackRef, setFromClientX, onKeyDown } = useCalibration(0.64);
+type CalibrationProps = ReturnType<typeof useCalibration>;
+
+export function DualityHero({
+  builtCount, categoryCount, t, setT, dragging, setDragging, trackRef, setFromClientX, onKeyDown,
+}: CalibrationProps & { builtCount: number; categoryCount: number }) {
   const [reducedMotion, setReducedMotion] = useState(false);
   const [viewportWidth, setViewportWidth] = useState(1200);
 
@@ -31,11 +39,12 @@ export function DualityHero({ builtCount, categoryCount }: { builtCount: number;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setViewportWidth(width);
     setReducedMotion(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-    // On a narrow screen, the default 0.64 split leaves Enterprise too
-    // narrow to read but not narrow enough to fully fade — push the rest
-    // position further toward Builder so the default state is always
+    // On a narrow screen (and only if the URL/page-level effect above
+    // hasn't already set a mode), the default 0.64 split leaves Enterprise
+    // too narrow to read but not narrow enough to fully fade — push the
+    // rest position further toward Builder so the default state is always
     // legible: one side full-strength, the other cleanly hidden.
-    if (width < 640) {
+    if (width < 640 && t === 0.64) {
       setT(0.8);
     }
     const updateWidth = () => setViewportWidth(window.innerWidth);
