@@ -33,7 +33,7 @@ export function ProjectCard({ project: p, onSelect }: { project: Project; onSele
           <div style={{ display: "flex", gap: "6px" }}>
             {isWork ? (
               <span style={{ background: "#71717a18", color: "#a1a1aa", padding: "2px 8px", borderRadius: "20px", fontSize: "10px", fontWeight: 600, fontFamily: "'Outfit', sans-serif", display: "flex", alignItems: "center", gap: "3px" }}>
-                <Lock size={8} /> CONFIDENTIAL
+                <Lock size={8} /> ENTERPRISE
               </span>
             ) : (
               <span style={{ background: p.live ? "#16a34a18" : "#71717a18", color: p.live ? "#4ade80" : "#a1a1aa", padding: "2px 8px", borderRadius: "20px", fontSize: "10px", fontWeight: 600, fontFamily: "'Outfit', sans-serif" }}>

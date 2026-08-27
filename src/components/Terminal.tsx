@@ -59,7 +59,7 @@ Projects: ${projects.map((p) => p.slug).join(", ")}`, [projects]);
     projects.map((p) => {
       const status = p.kind === "work" ? "◆" : p.live ? "●" : p.url ? "○" : "·";
       return `  ${status}  ${p.slug.padEnd(22)} ${p.tagline}`;
-    }).join("\n") + "\n\nUse 'cat <name>' for details. ◆ = confidential, ● = live, ○ = archived, · = never deployed.",
+    }).join("\n") + "\n\nUse 'cat <name>' for details. ◆ = enterprise, ● = live, ○ = archived, · = never deployed.",
   [projects]);
 
   const formatCat = useCallback((slug: string) => {
@@ -67,10 +67,10 @@ Projects: ${projects.map((p) => p.slug).join(", ")}`, [projects]);
     if (!p) return `cat: ${slug}: No such project. Try 'ls'.`;
     if (p.kind === "work") {
       return `
-  ${p.name} (codename — real name withheld)
+  ${p.name} (genericized — identifying details withheld)
   ${p.tagline}
   ${"─".repeat(50)}
-  STATUS:   ◆ CONFIDENTIAL
+  STATUS:   ◆ ENTERPRISE
   ROLE:     ${p.role}
   STACK:    ${p.stack.join(" / ")}
 
@@ -114,7 +114,7 @@ ${p.highlights.map((h) => "  > " + h).join("\n")}
         if (!arg) { next.push({ type: "output", text: "Usage: open <project>" }); break; }
         const p = projects.find((x) => x.slug === arg);
         if (!p) { next.push({ type: "output", text: `open: ${arg}: not found` }); break; }
-        if (p.kind === "work") { next.push({ type: "output", text: `${p.name} is internal and confidential — not publicly linked. Try the walkthrough in the visual view.` }); break; }
+        if (p.kind === "work") { next.push({ type: "output", text: `${p.name} is real enterprise work, genericized — not publicly linked. Try the walkthrough in the visual view.` }); break; }
         if (p.url) {
           next.push({ type: "output", text: `Opening ${p.url}...` });
           window.open(p.url, "_blank");

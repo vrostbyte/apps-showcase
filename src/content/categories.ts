@@ -53,10 +53,10 @@ export const CATEGORY_IDENTITY: Record<ProjectCategory, CategoryIdentity> = {
     glow: "#f472b6",
   },
   work: {
-    label: "Work (Confidential)",
-    shortLabel: "Confidential",
+    label: "Enterprise Projects",
+    shortLabel: "Enterprise",
     icon: "shield-check",
-    description: "Real internal tools, described in the abstract and codenamed.",
+    description: "Real work built for enterprise environments, described in the abstract.",
     frame: ["#c4b5fd", "#312e81", "#0c0a1a"],
     glow: "#a78bfa",
   },

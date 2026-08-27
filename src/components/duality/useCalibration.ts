@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
- * Drives the duality hero's calibration rule: 0 = full Builder, 1 = full
- * Enterprise. Handles pointer drag on the track, arrow-key adjustment on
+ * Drives the duality hero's calibration rule: 0 = full Enterprise, 1 = full
+ * Builder. Handles pointer drag on the track, arrow-key adjustment on
  * the handle (a real role="slider"), and click-to-jump anywhere on the
  * track. React state is the source of truth — this is a single hero
  * element, not a dense list, so a state update per pointermove is cheap
