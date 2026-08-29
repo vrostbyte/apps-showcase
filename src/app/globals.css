@@ -20,8 +20,29 @@
   --font-mono: var(--font-ibm-plex-mono), "SFMono-Regular", monospace;
 }
 
+/*
+ * Professional mode's design tokens, ported from myportfolio/app/globals.css
+ * — prefixed `pro-` throughout (and given their own @theme block, separate
+ * from the :root above) since apps-showcase already has its own `--font-mono`
+ * for IBM Plex Mono; an unprefixed merge would silently collide with it.
+ * Only ever consumed inside src/components/professional/.
+ */
+@theme {
+  --color-pro-accent: #d94f3d;
+  --color-pro-accent-light: #fef2f0;
+  --color-pro-surface: #f8f9fa;
+
+  --font-pro-sans: var(--font-outfit), "Segoe UI", sans-serif;
+  --font-pro-mono: var(--font-jetbrains-mono), monospace;
+}
+
 html {
   background: var(--builder-ground);
+  /* Harmless in Builder mode (nothing there uses hash-anchor navigation);
+     needed in Professional mode for its #Section nav links to land below
+     the fixed nav bar instead of under it. */
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
 }
 
 ::selection {
